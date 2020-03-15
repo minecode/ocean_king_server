@@ -82,9 +82,9 @@ app.post('/api/v1/player', function(req, res, next) {
 
 app.post('/api/v1/game/:player', function(req, res, next) {
 	res.locals.connection.query(
-		'INSERT INTO public."Game" (status, created_by) VALUES ({"starting"}, {' +
+		'INSERT INTO public."Game" (status, created_by) VALUES ({"starting"}, ' +
 			req.params.player +
-			'})',
+			')',
 		function(error, results, fields) {
 			if (error) {
 				res.send(
