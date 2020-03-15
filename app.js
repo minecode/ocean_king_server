@@ -11,7 +11,8 @@ app.use(function(req, res, next) {
 		user: 'tkcxyhjrizwgdk',
 		password:
 			'e84c2ab190448c3ed6d921cbc10bc5f9716cc94d3d5189b18715a7232f7ec115',
-		database: 'dd00gbfng1pbu1'
+		database: 'dd00gbfng1pbu1',
+		port: 5432
 	});
 	res.locals.connection.connect();
 	next();

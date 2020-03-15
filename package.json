@@ -1,25 +1,26 @@
 {
-  "name": "skull_king_server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "dependencies": {
-    "express": "^4.15.2",
-    "mysql": "^2.18.1",
-    "socket.io": "^2.3.0"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fabiohfab/skull_king_server.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/fabiohfab/skull_king_server/issues"
-  },
-  "homepage": "https://github.com/fabiohfab/skull_king_server#readme"
+	"name": "skull_king_server",
+	"version": "1.0.0",
+	"description": "",
+	"main": "app.js",
+	"dependencies": {
+		"express": "^4.15.2",
+		"mysql": "^2.18.1",
+		"socket.io": "^2.3.0"
+	},
+	"devDependencies": {},
+	"scripts": {
+		"start": "node app.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/fabiohfab/skull_king_server.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/fabiohfab/skull_king_server/issues"
+	},
+	"homepage": "https://github.com/fabiohfab/skull_king_server#readme"
 }
