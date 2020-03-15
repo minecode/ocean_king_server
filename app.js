@@ -19,7 +19,7 @@ app.use(function(req, res, next) {
 });
 
 app.get('/api/v1/game', function(req, res, next) {
-	res.locals.connection.query('SELECT * FROM Game', function(
+	res.locals.connection.query('SELECT * FROM public."Game"', function(
 		error,
 		results,
 		fields
