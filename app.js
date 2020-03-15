@@ -46,9 +46,12 @@ app.get('/api/v1/game', function(req, res, next) {
 	});
 });
 
-app.post('/api/v1/player/:email/:name', function(req, res, next) {
+app.post('/api/v1/player', function(req, res, next) {
+	var email = req.param('email');
+	var username = req.param('username');
+
 	res.locals.connection.query(
-		'INSERT INTO Player (email, username) VALUES (' +
+		'INSERT INTO public."Player" (email, username) VALUES (' +
 			email +
 			',' +
 			name +
@@ -78,7 +81,7 @@ app.post('/api/v1/player/:email/:name', function(req, res, next) {
 });
 
 app.get('/api/v1/game', function(req, res, next) {
-	res.locals.connection.query('SELECT * FROM Game', function(
+	res.locals.connection.query('SELECT * FROM public."Game"', function(
 		error,
 		results,
 		fields
@@ -107,8 +110,8 @@ app.get('/api/v1/game', function(req, res, next) {
 
 app.post('/api/v1/game/:player', function(req, res, next) {
 	res.locals.connection.query(
-		'INSERT INTO Game (status, created_by) VALUES ("starting", ' +
-			player +
+		'INSERT INTO public."Game" (status, created_by) VALUES ("starting", ' +
+			req.params.player +
 			')',
 		function(error, results, fields) {
 			if (error) {
