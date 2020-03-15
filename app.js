@@ -51,11 +51,11 @@ app.post('/api/v1/player', function(req, res, next) {
 	var username = req.param('username');
 
 	res.locals.connection.query(
-		'INSERT INTO public."Player" (email, username) VALUES (' +
+		'INSERT INTO public."Player" (email, username) VALUES (\'{' +
 			email +
-			',' +
+			"}','{" +
 			username +
-			')',
+			"}')",
 		function(error, results, fields) {
 			if (error) {
 				res.send(
