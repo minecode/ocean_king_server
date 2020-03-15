@@ -3,15 +3,15 @@ var port = process.env.PORT || 3000;
 var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
-var mysql = require('mysql');
 
+const { Pool, Client } = require('pg');
 app.use(function(req, res, next) {
-	res.locals.connection = mysql.createConnection({
-		host: 'ec2-46-137-84-173.eu-west-1.compute.amazonaws.com',
+	res.locals.connection = new Client({
 		user: 'tkcxyhjrizwgdk',
+		host: 'ec2-46-137-84-173.eu-west-1.compute.amazonaws.com',
+		database: 'dd00gbfng1pbu1',
 		password:
 			'e84c2ab190448c3ed6d921cbc10bc5f9716cc94d3d5189b18715a7232f7ec115',
-		database: 'dd00gbfng1pbu1',
 		port: 5432
 	});
 	res.locals.connection.connect();
