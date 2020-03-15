@@ -54,7 +54,7 @@ app.post('/api/v1/player', function(req, res, next) {
 		'INSERT INTO public."Player" (email, username) VALUES (' +
 			email +
 			',' +
-			name +
+			username +
 			')',
 		function(error, results, fields) {
 			if (error) {
