@@ -225,6 +225,12 @@ function getWinner(playedCards) {
 					playerS = card.player;
 					cardS = card.card[0];
 				}
+			} else {
+				if (current_card_winner.color[0] === 'f') {
+					current_card_winner = card.card[0];
+					current_winner = card.player;
+					ref = card.card[0].color;
+				}
 			}
 		} else if (
 			i === 0 &&
