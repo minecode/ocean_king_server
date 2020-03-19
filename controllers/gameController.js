@@ -181,6 +181,10 @@ function getWinner(playedCards) {
 					hasS = true;
 					playerS = card.player;
 				}
+			} else if (card.card[0].color === 'black') {
+				current_card_winner = card.card[0];
+				current_winner = card.player;
+				ref = card.card[0].color;
 			}
 		} else if (i !== 0 && !ref) {
 			if (
@@ -276,9 +280,7 @@ async function calculatePontuations(game) {
 					round: round._id,
 					winner: player.player._id
 				});
-				const wins2 = await Turn.find({
-					round: round._id
-				});
+
 
 				if (bet.value === 0) {
 					if (wins.length === 0) {
@@ -297,6 +299,38 @@ async function calculatePontuations(game) {
 						pont += -10 * diff;
 					}
 				}
+				
+
+				const turns = await Turn.find({round: round._id})
+
+				turns.forEach((t, i) => {
+					const played_cards_turn = await PlayedCards.find({round: round._id, turn: t._id})
+					let hasSkull = false
+					let hasS = false
+					let countP = 0
+	
+					played_cards_turn.forEach((e, i) => {
+						if(e.card[0].color[0] === 's'){
+							hasSkull = true
+						} else if(e.card[0].color[0] === 'm') {
+							hasS = true
+						}else if(e.card[0].color[0] === 'p') {
+							countP += 1
+						}
+					});
+	
+					const turn_winner = getWinner(played_cards_turn)
+					if(turn_winner.player === player.player._id) {
+						if(hasS && hasSkull) {
+							pont += 50
+						} else if(hasSkull) {
+							pont += 30*countP
+						}
+					}
+				})
+
+
+				
 
 				if (j + 1 === rounds.length) {
 					const score_board = await ScoreBoard.findOne({
