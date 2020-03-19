@@ -883,8 +883,9 @@ router.post('/leave', async (req, res) => {
 
 		const game_players = await GamePlayer.findOne({ game: id });
 		if (!game_players) {
-			const game = await Game.findOneAndRemove(
+			const game = await Game.findOneAndUpdate(
 				{ _id: id },
+				{ status: 'finished' },
 				{ useFindAndModify: false }
 			);
 		}
