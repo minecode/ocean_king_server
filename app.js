@@ -13,7 +13,7 @@ app.set('io', io);
 require('./controllers/authController')(app);
 require('./controllers/gameController')(app);
 
-http.listen(port, 'https://skull-king-game.herokuapp.com/', function() {
+http.listen(port, function() {
 	console.log('listening...');
 });
 
