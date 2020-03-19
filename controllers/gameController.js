@@ -896,6 +896,10 @@ router.post('/leave', async (req, res) => {
 					{ status: 'finished' },
 					{ useFindAndModify: false }
 				);
+				req.app
+					.get('io')
+					.to(id)
+					.emit('game finished');
 			}
 		}
 
