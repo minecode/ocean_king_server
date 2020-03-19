@@ -888,6 +888,15 @@ router.post('/leave', async (req, res) => {
 				{ status: 'finished' },
 				{ useFindAndModify: false }
 			);
+		} else {
+			const game = await Game.findOne({ _id: id });
+			if (game.status !== 'in queue') {
+				await Game.findOneAndUpdate(
+					{ _id: id },
+					{ status: 'finished' },
+					{ useFindAndModify: false }
+				);
+			}
 		}
 
 		return res.send({ gamePlayer });
