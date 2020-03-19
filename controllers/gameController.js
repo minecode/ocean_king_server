@@ -669,7 +669,7 @@ router.get('/playersStatus', async (req, res) => {
 				order: 1
 			});
 
-			// let bet = [];
+			// let bet = {};
 			// players.map(async (p, i) => {
 			// 	const temp = await Bet.find({ round: round._id, player: p })
 			// 		.sort({ player: 1 })
@@ -677,7 +677,7 @@ router.get('/playersStatus', async (req, res) => {
 			// 	bet.push(temp);
 			// });
 
-			const bet = await Bet.find({ round: round._id, player: p })
+			const bet = await Bet.find({ round: round._id })
 				.sort({ player: 1 })
 				.populate('player');
 
