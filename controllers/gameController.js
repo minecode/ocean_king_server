@@ -334,10 +334,7 @@ async function calculatePontuations(game) {
 							hasS = true;
 						} else if (e.card[0].color[0] === 'p') {
 							countP += 1;
-						} else if (
-							e.card[0].color[0] === 'b' &&
-							e.card[0].value === 'p'
-						) {
+						} else if (e.card[0].color[0] === 'b') {
 							countP += 1;
 						}
 					});
