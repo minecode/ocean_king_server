@@ -665,9 +665,17 @@ router.get('/playersStatus', async (req, res) => {
 				createdAt: -1
 			});
 
-			const bet = await Bet.find({ round: round._id })
+			const players = await GamePlayer({game: game}).sort({order : 1})
+
+			let bet = []
+			players.map((p,i) => {
+				const temp = await Bet.find({ round: round._id, player: p })
 				.sort({ player: 1 })
 				.populate('player');
+				bet.push(temp)
+			})
+
+			
 			const number_of_wins = await Turn.find({ round: round._id }).sort({
 				player: 1
 			});
