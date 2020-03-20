@@ -673,7 +673,7 @@ router.get('/playersStatus', async (req, res) => {
 
 			const players = await GamePlayer.find({ game: game }).sort({
 				order: 1
-			});
+			}).populate({'player'});
 
 			let temp_played_cards = await PlayedCards.find({
 				round: round._id,
