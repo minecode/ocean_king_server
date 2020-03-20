@@ -707,6 +707,7 @@ router.get('/playersStatus', async (req, res) => {
 				} else {
 					played_cards.push(instance);
 				}
+				console.log(played_cards);
 				const temp = await Bet.findOne({
 					round: round._id,
 					player: p.player._id
