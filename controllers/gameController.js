@@ -704,6 +704,7 @@ router.get('/playersStatus', async (req, res) => {
 					console.log(pc.player);
 					console.log(p.player);
 					console.log(pc.player === p.player);
+					console.log(String(pc.player) === String(p.player));
 					if (pc.player === p.player) {
 						found = true;
 						instance = pc;
