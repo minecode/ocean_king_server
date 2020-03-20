@@ -142,164 +142,114 @@ router.get('/cards', async (req, res) => {
 	}
 });
 
+function compare(a, b) {
+	let comparison = 0;
+	if (a.createdAt > b.createdAt) {
+		comparison = 1;
+	} else {
+		comparison = -1;
+	}
+	return comparison;
+}
+
 function getWinner(playedCards) {
-	hasS = false;
 	hasSkull = false;
-	playerS = null;
-	cardS = null;
-	current_winner = null;
-	current_card_winner = null;
-	ref = null;
-	console.log(playedCards);
+	skullCard = null;
+	skullPlayer = null;
+
+	hasPirate = false;
+	pirateCard = null;
+	piratePlayer = null;
+
+	hasMermaid = false;
+	mermaidCard = null;
+	mermaidPlayer = null;
+
+	firstColor = null;
+	currentCard = null;
+	currentPlayer = null;
+
+	playedCards = playedCards.sort(compare);
+
 	playedCards.map((card, i) => {
 		if (card.card[0].color[0] === 's') {
 			hasSkull = true;
+			skullCard = card.card[0];
+			skullPlayer = card.player;
 		}
+
+		if (card.card[0].color[0] === 'p') {
+			hasPirate = true;
+			pirateCard = card.card[0];
+			piratePlayer = card.player;
+		}
+
+		if (card.card[0].color[0] === 'm') {
+			hasMermaid = true;
+			mermaidCard = card.card[0];
+			mermaidPlayer = card.player;
+		}
+
+		if (card.card[0].color[0] === 'b' && card.card[0].value === 'p') {
+			hasPirate = true;
+			pirateCard = card.card[0];
+			piratePlayer = card.player;
+		}
+
 		if (
-			i == 0 &&
-			(card.card[0].color === 'red' ||
-				card.card[0].color === 'blue' ||
-				card.card[0].color === 'yellow' ||
-				card.card[0].color === 'black')
+			card.card[0].color === 'red' ||
+			card.card[0].color === 'yellow' ||
+			card.card[0].color === 'blue'
 		) {
-			ref = card.card[0].color;
-			current_card_winner = card.card[0];
-			current_winner = card.player;
-		} else if (i !== 0 && ref) {
-			if (
-				card.card[0].color === ref &&
-				card.card[0].value > current_card_winner.value
-			) {
-				current_card_winner = card.card[0];
-				current_winner = card.player;
-			} else if (
-				card.card[0].color !== 'red' &&
-				card.card[0].color !== 'blue' &&
-				card.card[0].color !== 'yellow' &&
-				card.card[0].color !== 'black'
-			) {
-				if (
-					!(
-						card.card[0].color[0] === 'b' &&
-						card.card[0].value === 'f'
-					) &&
-					card.card[0].color[0] !== 'f'
-				) {
-					ref = null;
-					current_card_winner = card.card[0];
-					current_winner = card.player;
-				}
-				if (card.card[0].color[0] === 's') {
-					hasSkull = true;
-				}
-
-				if (card.card[0].color[0] === 'm') {
-					hasS = true;
-					playerS = card.player;
-				}
-			} else if (card.card[0].color === 'black') {
-				current_card_winner = card.card[0];
-				current_winner = card.player;
-				ref = card.card[0].color;
-			}
-		} else if (i !== 0 && !ref) {
-			if (
-				card.card[0].color !== 'red' &&
-				card.card[0].color !== 'blue' &&
-				card.card[0].color !== 'yellow' &&
-				card.card[0].color !== 'black'
-			) {
-				if (current_card_winner.color[0] === 'p') {
-					if (card.card[0].color[0] === 's') {
-						hasSkull = true;
-						current_card_winner = card.card[0];
-						current_winner = card.player;
-					}
-				}
-				if (current_card_winner.color[0] === 'b') {
-					if (current_card_winner.value === 'f') {
-						if (
-							card.card[0].color[0] === 's' ||
-							(card.card[0].color[0] === 'b' &&
-								card.card[0].value === 'p') ||
-							card.card[0].color[0] === 'p' ||
-							card.card[0].color[0] === 'm'
-						) {
-							if (card.card[0].color[0] === 's') {
-								hasSkull = true;
-							}
-							current_card_winner = card.card[0];
-							current_winner = card.player;
-						}
-					} else if (current_card_winner.value === 'p') {
-						if (card.card[0].color[0] === 's') {
-							hasSkull = true;
-							current_card_winner = card.card[0];
-							current_winner = card.player;
-						}
-					}
-				}
-				if (current_card_winner.color[0] === 'f') {
-					if (
-						card.card[0].color[0] === 's' ||
-						card.card[0].color[0] === 'p' ||
-						card.card[0].color[0] === 'm'
-					) {
-						if (card.card[0].color[0] === 's') {
-							hasSkull = true;
-						}
-						current_card_winner = card.card[0];
-						current_winner = card.player;
-					}
-				}
-				if (current_card_winner.color[0] === 's') {
-					if (card.card[0].color[0] === 'm') {
-						current_card_winner = card.card[0];
-						current_winner = card.player;
-					}
-				}
-				if (current_card_winner.color[0] === 'm') {
-					if (card.card[0].color[0] === 'p') {
-						current_card_winner = card.card[0];
-						current_winner = card.player;
-					}
-				}
-				if (card.card[0].color[0] === 's') {
-					hasSkull = true;
-				}
-				if (card.card[0].color[0] === 'm') {
-					hasS = true;
-					playerS = card.player;
-					cardS = card.card[0];
-				}
+			if (firstColor === null) {
+				firstColor = card.card[0].color;
+				currentCard = card.card[0];
+				currentPlayer = card.player;
 			} else {
-				current_card_winner = card.card[0];
-				current_winner = card.player;
-				ref = card.card[0].color;
+				if (
+					card.card[0].color === firstColor &&
+					card.card[0].value > currentCard.value
+				) {
+					currentCard = card.card[0];
+					currentPlayer = card.player;
+				}
 			}
-		} else if (
-			i === 0 &&
-			card.card[0].color !== 'red' &&
-			card.card[0].color !== 'blue' &&
-			card.card[0].color !== 'yellow' &&
-			card.card[0].color !== 'black'
-		) {
-			current_card_winner = card.card[0];
-			current_winner = card.player;
+		}
 
-			if (card.card[0].color[0] === 'm') {
-				hasS = true;
-				playerS = card.player;
-				cardS = card.card[0];
+		if (card.card[0].color === 'black') {
+			if (firstColor !== black || firstColor === null) {
+				firstColor = card.card[0].color;
+				currentCard = card.card[0];
+				currentPlayer = card.player;
+			} else {
+				if (card.card[0].value > currentCard.value) {
+					currentCard = card.card[0];
+					currentPlayer = card.player;
+				}
+			}
+		}
+
+		if (
+			card.card[0].color === 'flag' ||
+			(card.card[0].color[0] === 'b' && card.card[0].value === 'f')
+		) {
+			if (currentPlayer === null) {
+				currentCard = card.card[0];
+				currentPlayer = card.player;
 			}
 		}
 	});
 
-	if (hasS && hasSkull) {
-		return { card: cardS, player: playerS };
-	} else {
-		return { card: current_card_winner, player: current_winner };
+	if (hasSkull && hasMermaid) {
+		return { card: mermaidCard, player: mermaidPlayer };
 	}
+	if (hasSkull && !hasMermaid) {
+		return { card: skullCard, player: skullPlayer };
+	}
+	if (hasPirate && !hasSkull) {
+		return { card: pirateCard, player: piratePlayer };
+	}
+	return { card: currentCard, player: currentPlayer };
 }
 
 function timeout(ms) {
