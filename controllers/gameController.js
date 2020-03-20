@@ -687,38 +687,38 @@ router.get('/playersStatus', async (req, res) => {
 			let bet = [];
 			let temp_results = {};
 			let played_cards = [];
-			await players.forEach(async (p, i) => {
-				if (temp_results[p.player._id] === undefined) {
-					temp_results[p.player._id] = 0;
-				}
-				let found = false;
-				let instance = null;
-				await temp_played_cards.forEach((pc, j) => {
-					if (pc.player._id == p.player._id) {
-						found = true;
-						instance = pc;
+			Promise.all(
+				players.forEach(async (p, i) => {
+					if (temp_results[p.player._id] === undefined) {
+						temp_results[p.player._id] = 0;
 					}
-				});
-				if (!found) {
-					played_cards.push({
-						round: round._id,
-						turn: turn._id,
-						card: { color: 'back', value: 0 },
-						player: p.player
+					let found = false;
+					let instance = null;
+					await temp_played_cards.forEach((pc, j) => {
+						if (pc.player._id == p.player._id) {
+							found = true;
+							instance = pc;
+						}
 					});
-				} else {
-					played_cards.push(instance);
-				}
-				const temp = await Bet.findOne({
-					round: round._id,
-					player: p.player._id
+					if (!found) {
+						played_cards.push({
+							round: round._id,
+							turn: turn._id,
+							card: { color: 'back', value: 0 },
+							player: p.player
+						});
+					} else {
+						played_cards.push(instance);
+					}
+					const temp = await Bet.findOne({
+						round: round._id,
+						player: p.player._id
+					})
+						.sort({ player: 1 })
+						.populate('player');
+					bet.push(temp);
 				})
-					.sort({ player: 1 })
-					.populate('player');
-				console.log(p.player._id);
-				console.log(temp);
-				bet.push(temp);
-			});
+			);
 
 			// const bet = await Bet.find({ round: round._id })
 			// 	.sort({ player: 1 })
