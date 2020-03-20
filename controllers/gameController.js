@@ -710,7 +710,7 @@ router.get('/playersStatus', async (req, res) => {
 					played_cards.push({
 						round: round._id,
 						turn: turn._id,
-						card: { color: 'back', value: 0 },
+						card: [{ color: 'back', value: 0 }],
 						player: p.player
 					});
 				} else {
