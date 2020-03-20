@@ -701,11 +701,7 @@ router.get('/playersStatus', async (req, res) => {
 				let found = false;
 				let instance = null;
 				temp_played_cards.forEach((pc, j) => {
-					console.log(pc.player);
-					console.log(p.player);
-					console.log(pc.player === p.player);
-					console.log(String(pc.player) === String(p.player));
-					if (pc.player === p.player) {
+					if (String(pc.player._id) === String(p.player._id)) {
 						found = true;
 						instance = pc;
 					}
