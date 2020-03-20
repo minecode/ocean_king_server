@@ -678,7 +678,11 @@ router.get('/playersStatus', async (req, res) => {
 			});
 
 			let bet = [];
+			let temp_results = {};
 			await players.forEach(async (p, i) => {
+				if (temp_results[p.player._id] === undefined) {
+					temp_results[p.player._id] = 0;
+				}
 				const temp = await Bet.findOne({
 					round: round._id,
 					player: p.player._id
@@ -701,7 +705,6 @@ router.get('/playersStatus', async (req, res) => {
 			})
 				.sort({ player: 1 })
 				.populate('player');
-			let temp_results = {};
 			number_of_wins.map((turn, i) => {
 				if (turn.winner !== undefined) {
 					if (temp_results[turn.winner] === undefined) {
