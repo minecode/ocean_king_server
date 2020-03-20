@@ -173,9 +173,16 @@ function getWinner(playedCards) {
 				card.card[0].color !== 'yellow' &&
 				card.card[0].color !== 'black'
 			) {
-				ref = null;
-				current_card_winner = card.card[0];
-				current_winner = card.player;
+				if (
+					!(
+						card.card[0].color === 'b' && card.card[0].value === 'f'
+					) &&
+					card.card[0].color !== 'f'
+				) {
+					ref = null;
+					current_card_winner = card.card[0];
+					current_winner = card.player;
+				}
 
 				if (card.card[0].color[0] === 'm') {
 					hasS = true;
