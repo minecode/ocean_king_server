@@ -328,7 +328,7 @@ async function calculatePontuations(game) {
 					const played_cards_turn = await PlayedCards.find({
 						round: round._id,
 						turn: t._id
-					}).sort({ createdAt: asc });
+					}).sort({ createdAt: 'asc' });
 					let hasSkull = false;
 					let hasS = false;
 					let countP = 0;
@@ -458,7 +458,7 @@ router.post('/cards', async (req, res) => {
 					const total_playedCards = await PlayedCards.find({
 						round: round._id,
 						turn: turn._id
-					}).sort({ createdAt: asc });
+					}).sort({ createdAt: 'asc' });
 
 					req.app
 						.get('io')
@@ -697,6 +697,7 @@ router.get('/playersStatus', async (req, res) => {
 						instance = pc;
 					}
 				});
+				console.log(p);
 				if (!found) {
 					played_cards.push({
 						round: round._id,
