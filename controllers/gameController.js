@@ -715,6 +715,8 @@ router.get('/playersStatus', async (req, res) => {
 				})
 					.sort({ player: 1 })
 					.populate('player');
+				console.log(p.player._id);
+				console.log(temp);
 				bet.push(temp);
 			});
 
