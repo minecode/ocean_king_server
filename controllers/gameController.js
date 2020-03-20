@@ -659,6 +659,12 @@ router.post('/', async (req, res) => {
 	}
 });
 
+async function asyncForEach(array, callback) {
+	for (let index = 0; index < array.length; index++) {
+		await callback(array[index], index, array);
+	}
+}
+
 router.get('/playersStatus', async (req, res) => {
 	const { game } = req.query;
 
@@ -687,38 +693,36 @@ router.get('/playersStatus', async (req, res) => {
 			let bet = [];
 			let temp_results = {};
 			let played_cards = [];
-			Promise.all(
-				players.forEach(async (p, i) => {
-					if (temp_results[p.player._id] === undefined) {
-						temp_results[p.player._id] = 0;
+			asyncForEach(players, async (p, i) => {
+				if (temp_results[p.player._id] === undefined) {
+					temp_results[p.player._id] = 0;
+				}
+				let found = false;
+				let instance = null;
+				await temp_played_cards.forEach((pc, j) => {
+					if (pc.player._id == p.player._id) {
+						found = true;
+						instance = pc;
 					}
-					let found = false;
-					let instance = null;
-					await temp_played_cards.forEach((pc, j) => {
-						if (pc.player._id == p.player._id) {
-							found = true;
-							instance = pc;
-						}
-					});
-					if (!found) {
-						played_cards.push({
-							round: round._id,
-							turn: turn._id,
-							card: { color: 'back', value: 0 },
-							player: p.player
-						});
-					} else {
-						played_cards.push(instance);
-					}
-					const temp = await Bet.findOne({
+				});
+				if (!found) {
+					played_cards.push({
 						round: round._id,
-						player: p.player._id
-					})
-						.sort({ player: 1 })
-						.populate('player');
-					bet.push(temp);
+						turn: turn._id,
+						card: { color: 'back', value: 0 },
+						player: p.player
+					});
+				} else {
+					played_cards.push(instance);
+				}
+				const temp = await Bet.findOne({
+					round: round._id,
+					player: p.player._id
 				})
-			);
+					.sort({ player: 1 })
+					.populate('player');
+				bet.push(temp);
+			});
 
 			// const bet = await Bet.find({ round: round._id })
 			// 	.sort({ player: 1 })
