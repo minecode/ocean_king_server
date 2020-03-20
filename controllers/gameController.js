@@ -144,12 +144,17 @@ router.get('/cards', async (req, res) => {
 
 function getWinner(playedCards) {
 	hasS = false;
+	hasSkull = false;
 	playerS = null;
 	cardS = null;
 	current_winner = null;
 	current_card_winner = null;
 	ref = null;
+	console.log(playedCards);
 	playedCards.map((card, i) => {
+		if (card.card[0].color[0] === 's') {
+			hasSkull = true;
+		}
 		if (
 			i == 0 &&
 			(card.card[0].color === 'red' ||
@@ -184,6 +189,9 @@ function getWinner(playedCards) {
 					current_card_winner = card.card[0];
 					current_winner = card.player;
 				}
+				if (card.card[0].color[0] === 's') {
+					hasSkull = true;
+				}
 
 				if (card.card[0].color[0] === 'm') {
 					hasS = true;
@@ -203,6 +211,7 @@ function getWinner(playedCards) {
 			) {
 				if (current_card_winner.color[0] === 'p') {
 					if (card.card[0].color[0] === 's') {
+						hasSkull = true;
 						current_card_winner = card.card[0];
 						current_winner = card.player;
 					}
@@ -216,11 +225,15 @@ function getWinner(playedCards) {
 							card.card[0].color[0] === 'p' ||
 							card.card[0].color[0] === 'm'
 						) {
+							if (card.card[0].color[0] === 's') {
+								hasSkull = true;
+							}
 							current_card_winner = card.card[0];
 							current_winner = card.player;
 						}
 					} else if (current_card_winner.value === 'p') {
 						if (card.card[0].color[0] === 's') {
+							hasSkull = true;
 							current_card_winner = card.card[0];
 							current_winner = card.player;
 						}
@@ -232,6 +245,9 @@ function getWinner(playedCards) {
 						card.card[0].color[0] === 'p' ||
 						card.card[0].color[0] === 'm'
 					) {
+						if (card.card[0].color[0] === 's') {
+							hasSkull = true;
+						}
 						current_card_winner = card.card[0];
 						current_winner = card.player;
 					}
@@ -248,7 +264,9 @@ function getWinner(playedCards) {
 						current_winner = card.player;
 					}
 				}
-
+				if (card.card[0].color[0] === 's') {
+					hasSkull = true;
+				}
 				if (card.card[0].color[0] === 'm') {
 					hasS = true;
 					playerS = card.player;
@@ -279,7 +297,7 @@ function getWinner(playedCards) {
 		}
 	});
 
-	if (hasS) {
+	if (hasS && hasSkull) {
 		return { card: cardS, player: playerS };
 	} else {
 		return { card: current_card_winner, player: current_winner };
