@@ -704,11 +704,13 @@ router.get('/playersStatus', async (req, res) => {
 					console.log(pc);
 					console.log(p);
 					if (pc.player._id == p.player._id) {
+						console.log('0');
 						found = true;
 						instance = pc;
 					}
 				});
 				if (!found) {
+					console.log('1');
 					played_cards.push({
 						round: round._id,
 						turn: turn._id,
@@ -716,6 +718,7 @@ router.get('/playersStatus', async (req, res) => {
 						player: p.player
 					});
 				} else {
+					console.log('2');
 					played_cards.push(instance);
 				}
 				const temp = await Bet.findOne({
