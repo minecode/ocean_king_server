@@ -208,7 +208,7 @@ function getWinner(playedCards) {
 			} else {
 				if (
 					card.card[0].color === firstColor &&
-					card.card[0].value > currentCard.value
+					parseInt(card.card[0].value) > parseInt(currentCard.value)
 				) {
 					currentCard = card.card[0];
 					currentPlayer = card.player;
@@ -222,7 +222,9 @@ function getWinner(playedCards) {
 				currentCard = card.card[0];
 				currentPlayer = card.player;
 			} else {
-				if (card.card[0].value > currentCard.value) {
+				if (
+					parseInt(card.card[0].value) > parseInt(currentCard.value)
+				) {
 					currentCard = card.card[0];
 					currentPlayer = card.player;
 				}
