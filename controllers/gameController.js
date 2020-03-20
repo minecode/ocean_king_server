@@ -249,6 +249,9 @@ function getWinner(playedCards) {
 	if (hasPirate && !hasSkull) {
 		return { card: pirateCard, player: piratePlayer };
 	}
+	if (hasMermaid && !hasPirate && !hasSkull) {
+		return { card: mermaidCard, player: mermaidPlayer };
+	}
 	return { card: currentCard, player: currentPlayer };
 }
 
