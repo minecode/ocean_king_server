@@ -217,7 +217,7 @@ function getWinner(playedCards) {
 		}
 
 		if (card.card[0].color === 'black') {
-			if (firstColor !== black || firstColor === null) {
+			if (firstColor !== 'black' || firstColor === null) {
 				firstColor = card.card[0].color;
 				currentCard = card.card[0];
 				currentPlayer = card.player;
