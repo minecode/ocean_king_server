@@ -693,13 +693,14 @@ router.get('/playersStatus', async (req, res) => {
 			let bet = [];
 			let temp_results = {};
 			let played_cards = [];
-			asyncForEach(players, async (p, i) => {
+
+			await asyncForEach(players, async (p, i) => {
 				if (temp_results[p.player._id] === undefined) {
 					temp_results[p.player._id] = 0;
 				}
 				let found = false;
 				let instance = null;
-				await temp_played_cards.forEach((pc, j) => {
+				temp_played_cards.forEach((pc, j) => {
 					if (pc.player._id == p.player._id) {
 						found = true;
 						instance = pc;
