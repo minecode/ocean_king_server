@@ -175,9 +175,10 @@ function getWinner(playedCards) {
 			) {
 				if (
 					!(
-						card.card[0].color === 'b' && card.card[0].value === 'f'
+						card.card[0].color[0] === 'b' &&
+						card.card[0].value === 'f'
 					) &&
-					card.card[0].color !== 'f'
+					card.card[0].color[0] !== 'f'
 				) {
 					ref = null;
 					current_card_winner = card.card[0];
