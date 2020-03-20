@@ -167,7 +167,7 @@ function getWinner(playedCards) {
 			current_winner = card.player;
 		} else if (i !== 0 && ref) {
 			if (
-				card.card[0].color == ref &&
+				card.card[0].color === ref &&
 				card.card[0].value > current_card_winner.value
 			) {
 				current_card_winner = card.card[0];
@@ -273,11 +273,9 @@ function getWinner(playedCards) {
 					cardS = card.card[0];
 				}
 			} else {
-				if (current_card_winner.color[0] === 'f') {
-					current_card_winner = card.card[0];
-					current_winner = card.player;
-					ref = card.card[0].color;
-				}
+				current_card_winner = card.card[0];
+				current_winner = card.player;
+				ref = card.card[0].color;
 			}
 		} else if (
 			i === 0 &&
@@ -348,7 +346,7 @@ async function calculatePontuations(game) {
 					const played_cards_turn = await PlayedCards.find({
 						round: round._id,
 						turn: t._id
-					});
+					}).sort({ createdAt: 'asc' });
 					let hasSkull = false;
 					let hasS = false;
 					let countP = 0;
@@ -478,7 +476,7 @@ router.post('/cards', async (req, res) => {
 					const total_playedCards = await PlayedCards.find({
 						round: round._id,
 						turn: turn._id
-					}).sort({ createdAt: 1 });
+					}).sort({ createdAt: 'asc' });
 
 					req.app
 						.get('io')
@@ -679,6 +677,12 @@ router.post('/', async (req, res) => {
 	}
 });
 
+async function asyncForEach(array, callback) {
+	for (let index = 0; index < array.length; index++) {
+		await callback(array[index], index, array);
+	}
+}
+
 router.get('/playersStatus', async (req, res) => {
 	const { game } = req.query;
 
@@ -691,15 +695,44 @@ router.get('/playersStatus', async (req, res) => {
 				createdAt: -1
 			});
 
-			const players = await GamePlayer.find({ game: game }).sort({
-				order: 1
-			});
+			const players = await GamePlayer.find({ game: game })
+				.sort({
+					order: 1
+				})
+				.populate('player');
+
+			let temp_played_cards = await PlayedCards.find({
+				round: round._id,
+				turn: turn._id
+			})
+				.sort({ player: 1 })
+				.populate('player');
 
 			let bet = [];
 			let temp_results = {};
-			await players.forEach(async (p, i) => {
+			let played_cards = [];
+
+			await asyncForEach(players, async (p, i) => {
 				if (temp_results[p.player._id] === undefined) {
 					temp_results[p.player._id] = 0;
+				}
+				let found = false;
+				let instance = null;
+				temp_played_cards.forEach((pc, j) => {
+					if (String(pc.player._id) === String(p.player._id)) {
+						found = true;
+						instance = pc;
+					}
+				});
+				if (!found) {
+					played_cards.push({
+						round: round._id,
+						turn: turn._id,
+						card: [{ color: 'back', value: 0 }],
+						player: p.player
+					});
+				} else {
+					played_cards.push(instance);
 				}
 				const temp = await Bet.findOne({
 					round: round._id,
@@ -717,12 +750,7 @@ router.get('/playersStatus', async (req, res) => {
 			const number_of_wins = await Turn.find({ round: round._id }).sort({
 				player: 1
 			});
-			const played_cards = await PlayedCards.find({
-				round: round._id,
-				turn: turn._id
-			})
-				.sort({ player: 1 })
-				.populate('player');
+
 			number_of_wins.map((turn, i) => {
 				if (turn.winner !== undefined) {
 					if (temp_results[turn.winner] === undefined) {
