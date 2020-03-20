@@ -701,17 +701,15 @@ router.get('/playersStatus', async (req, res) => {
 				let found = false;
 				let instance = null;
 				temp_played_cards.forEach((pc, j) => {
-					console.log(pc.player._id);
-					console.log(p.player._id);
+					console.log(typeof pc.player._id);
+					console.log(typeof p.player._id);
 					console.log(pc.player._id === p.player._id);
 					if (pc.player._id === p.player._id) {
-						console.log('0');
 						found = true;
 						instance = pc;
 					}
 				});
 				if (!found) {
-					console.log('1');
 					played_cards.push({
 						round: round._id,
 						turn: turn._id,
@@ -719,7 +717,6 @@ router.get('/playersStatus', async (req, res) => {
 						player: p.player
 					});
 				} else {
-					console.log('2');
 					played_cards.push(instance);
 				}
 				const temp = await Bet.findOne({
@@ -749,7 +746,6 @@ router.get('/playersStatus', async (req, res) => {
 					}
 				}
 			});
-			console.log({ bet, played_cards, temp_results });
 			return res.send({ bet, played_cards, temp_results });
 		} else {
 			return res.status(400).send({ error: 'Cannot get player status' });
