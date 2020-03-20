@@ -683,7 +683,8 @@ router.get('/playersStatus', async (req, res) => {
 				.populate('player');
 
 			let bet = [];
-			let temp_results = [];
+			let temp_results = {};
+			let played_cards = [];
 			await players.forEach(async (p, i) => {
 				if (temp_results[p.player._id] === undefined) {
 					temp_results[p.player._id] = 0;
@@ -697,14 +698,14 @@ router.get('/playersStatus', async (req, res) => {
 					}
 				});
 				if (!found) {
-					temp_results.push({
+					played_cards.push({
 						round: round._id,
 						turn: turn._id,
 						card: { color: 'back', value: 0 },
 						player: p.player
 					});
 				} else {
-					temp_results.push(instance);
+					played_cards.push(instance);
 				}
 				const temp = await Bet.findOne({
 					round: round._id,
