@@ -494,7 +494,7 @@ router.post('/cards', async (req, res) => {
 
 								if (
 									players.length * new_round.roundNumber >
-									70
+									cards.length
 								) {
 									const game = await Game.findOneAndUpdate(
 										{ _id: game._id },
