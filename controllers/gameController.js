@@ -258,8 +258,6 @@ async function calculatePontuations(game) {
 
 				const turns = await Turn.find({ round: round._id });
 
-				console.log(pont);
-
 				await asyncForEach(turns, async (t, i) => {
 					const played_cards_turn = await PlayedCards.find({
 						round: round._id,
@@ -270,7 +268,6 @@ async function calculatePontuations(game) {
 					let countP = 0;
 
 					played_cards_turn.forEach((e, i) => {
-						console.log(e);
 						if (e.card[0].color[0] === 's') {
 							hasSkull = true;
 						} else if (e.card[0].color[0] === 'm') {
@@ -285,15 +282,12 @@ async function calculatePontuations(game) {
 					const turn_winner = getWinner(played_cards_turn);
 					if (String(turn_winner.player) === player.player._id) {
 						if (hasS && hasSkull) {
-							console.log('Increment skull');
 							pont += 50;
 						} else if (hasSkull) {
-							console.log('Increment pirates');
 							pont += 30 * countP;
 						}
 					}
 				});
-				console.log(pont);
 
 				if (j + 1 === rounds.length) {
 					const score_board = await ScoreBoard.findOne({
@@ -854,7 +848,6 @@ router.get('/currentPlayer', async (req, res) => {
 		const round = await Round.findOne({ game: game }).sort({
 			createdAt: -1
 		});
-		console.log('------------------------0------------------------');
 		if (round) {
 			const turn = await Turn.findOne({ round: round._id }).sort({
 				createdAt: -1
@@ -865,11 +858,7 @@ router.get('/currentPlayer', async (req, res) => {
 			})
 				.sort({ createdAt: -1 })
 				.populate('player');
-			console.log('------------------------1------------------------');
 			if (played_cards) {
-				console.log(
-					'------------------------2------------------------'
-				);
 				const order = await GamePlayer.findOne({
 					player: played_cards.player._id
 				});
@@ -888,9 +877,6 @@ router.get('/currentPlayer', async (req, res) => {
 					return res.send({ player: next_player[0].player });
 				}
 			} else {
-				console.log(
-					'------------------------3------------------------'
-				);
 				if (round.roundNumber == 1) {
 					const next_player = await GamePlayer.find({
 						game: game,
