@@ -80,7 +80,6 @@ const cards = [
 	{ color: 'p3', value: '0' },
 	{ color: 'p4', value: '0' },
 	{ color: 'p5', value: '0' },
-
 	{ color: 'sk', value: '0' }
 ];
 
@@ -128,8 +127,6 @@ function getWinner(playedCards) {
 	currentPlayer = null;
 
 	playedCards = playedCards.sort(compare);
-
-	console.log(playedCards);
 
 	playedCards.map((card, i) => {
 		if (card.card[0].color[0] === 's' && !hasSkull) {
@@ -261,6 +258,8 @@ async function calculatePontuations(game) {
 
 				const turns = await Turn.find({ round: round._id });
 
+				console.log(pont);
+
 				await asyncForEach(turns, async (t, i) => {
 					const played_cards_turn = await PlayedCards.find({
 						round: round._id,
@@ -271,6 +270,7 @@ async function calculatePontuations(game) {
 					let countP = 0;
 
 					played_cards_turn.forEach((e, i) => {
+						console.log(e);
 						if (e.card[0].color[0] === 's') {
 							hasSkull = true;
 						} else if (e.card[0].color[0] === 'm') {
@@ -285,12 +285,15 @@ async function calculatePontuations(game) {
 					const turn_winner = getWinner(played_cards_turn);
 					if (turn_winner.player === player.player._id) {
 						if (hasS && hasSkull) {
+							console.log('Increment skull');
 							pont += 50;
 						} else if (hasSkull) {
+							console.log('Increment pirates');
 							pont += 30 * countP;
 						}
 					}
 				});
+				console.log(pont);
 
 				if (j + 1 === rounds.length) {
 					const score_board = await ScoreBoard.findOne({
