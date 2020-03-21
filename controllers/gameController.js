@@ -248,7 +248,7 @@ async function calculatePontuations(game) {
 					}
 				} else {
 					if (wins.length === bet.value) {
-						pont += bet.value * 10;
+						pont += bet.value * 20;
 					} else {
 						let diff = bet.value - wins.length;
 						if (diff < 0) {
