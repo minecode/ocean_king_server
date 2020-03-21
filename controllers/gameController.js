@@ -193,7 +193,7 @@ function getWinner(playedCards) {
 		}
 
 		if (
-			card.card[0].color === 'flag' ||
+			card.card[0].color[0] === 'f' ||
 			(card.card[0].color[0] === 'b' && card.card[0].value === 'f')
 		) {
 			if (currentPlayer === null) {
