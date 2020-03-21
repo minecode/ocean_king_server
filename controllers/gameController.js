@@ -500,7 +500,7 @@ router.post('/cards', async (req, res) => {
 									players.length * new_round.roundNumber >
 									cards.length
 								) {
-									const game = await Game.findOneAndUpdate(
+									const new_game = await Game.findOneAndUpdate(
 										{ _id: game._id },
 										{ status: 'finished' },
 										{ useFindAndModify: false }
