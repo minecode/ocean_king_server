@@ -131,25 +131,29 @@ function getWinner(playedCards) {
 	console.log(playedCards);
 
 	playedCards.map((card, i) => {
-		if (card.card[0].color[0] === 's') {
+		if (card.card[0].color[0] === 's' && !hasSkull) {
 			hasSkull = true;
 			skullCard = card.card[0];
 			skullPlayer = card.player;
 		}
 
-		if (card.card[0].color[0] === 'p') {
+		if (card.card[0].color[0] === 'p' && !hasPirate) {
 			hasPirate = true;
 			pirateCard = card.card[0];
 			piratePlayer = card.player;
 		}
 
-		if (card.card[0].color[0] === 'm') {
+		if (card.card[0].color[0] === 'm' && !hasMermaid) {
 			hasMermaid = true;
 			mermaidCard = card.card[0];
 			mermaidPlayer = card.player;
 		}
 
-		if (card.card[0].color[0] === 'b' && card.card[0].value === 'p') {
+		if (
+			card.card[0].color[0] === 'b' &&
+			card.card[0].value === 'p' &&
+			!hasPirate
+		) {
 			hasPirate = true;
 			pirateCard = card.card[0];
 			piratePlayer = card.player;
