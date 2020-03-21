@@ -11,6 +11,11 @@ const ScoreBoard = require('../models/ScoreBoard');
 const router = express.Router();
 
 const cards = [
+	// { color: 'flag1', value: '0' },
+	// { color: 'flag2', value: '0' },
+	// { color: 'flag3', value: '0' },
+	// { color: 'flag4', value: '0' },
+	// { color: 'flag5', value: '0' },
 	// { color: 'red', value: '0' },
 	// { color: 'red', value: '1' },
 	// { color: 'red', value: '2' },
@@ -67,20 +72,16 @@ const cards = [
 	// { color: 'black', value: '11' },
 	// { color: 'black', value: '12' },
 	// { color: 'black', value: '13' },
-	// { color: 'sk', value: '0' },
+	{ color: 'm1', value: '0' },
+	{ color: 'm2', value: '0' },
+	{ color: 'binary', value: '0' },
 	{ color: 'p1', value: '0' },
 	{ color: 'p2', value: '0' },
 	{ color: 'p3', value: '0' },
 	{ color: 'p4', value: '0' },
 	{ color: 'p5', value: '0' },
-	// { color: 'm1', value: '0' },
-	// { color: 'm2', value: '0' },
-	// { color: 'flag1', value: '0' },
-	// { color: 'flag2', value: '0' },
-	// { color: 'flag3', value: '0' },
-	// { color: 'flag4', value: '0' },
-	// { color: 'flag5', value: '0' },
-	{ color: 'binary', value: '0' }
+
+	{ color: 'sk', value: '0' }
 ];
 
 async function asyncForEach(array, callback) {
