@@ -283,7 +283,9 @@ async function calculatePontuations(game) {
 					});
 
 					const turn_winner = getWinner(played_cards_turn);
-					if (turn_winner.player === player.player._id) {
+					if (
+						String(turn_winner.player) === String(player.player._id)
+					) {
 						if (hasS && hasSkull) {
 							console.log('Increment skull');
 							pont += 50;
