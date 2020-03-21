@@ -854,6 +854,7 @@ router.get('/currentPlayer', async (req, res) => {
 		const round = await Round.findOne({ game: game }).sort({
 			createdAt: -1
 		});
+		console.log('------------------------0------------------------');
 		if (round) {
 			const turn = await Turn.findOne({ round: round._id }).sort({
 				createdAt: -1
@@ -864,7 +865,11 @@ router.get('/currentPlayer', async (req, res) => {
 			})
 				.sort({ createdAt: -1 })
 				.populate('player');
+			console.log('------------------------1------------------------');
 			if (played_cards) {
+				console.log(
+					'------------------------2------------------------'
+				);
 				const order = await GamePlayer.findOne({
 					player: played_cards.player._id
 				});
@@ -883,6 +888,9 @@ router.get('/currentPlayer', async (req, res) => {
 					return res.send({ player: next_player[0].player });
 				}
 			} else {
+				console.log(
+					'------------------------3------------------------'
+				);
 				if (round.roundNumber == 1) {
 					const next_player = await GamePlayer.find({
 						game: game,
