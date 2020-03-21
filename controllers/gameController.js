@@ -568,7 +568,7 @@ router.post('/cards', async (req, res) => {
 							} else {
 								await calculatePontuations(game._id);
 
-								const game = await Game.findOneAndUpdate(
+								const temp_game = await Game.findOneAndUpdate(
 									{ _id: game._id },
 									{ status: 'finished' },
 									{ useFindAndModify: false }
