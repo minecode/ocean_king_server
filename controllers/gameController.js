@@ -866,13 +866,13 @@ router.get('/currentPlayer', async (req, res) => {
 				if (order == players.length) {
 					const next_player = await GamePlayer.find({
 						game: game,
-						order: 1
+						order: parseInt(1)
 					}).populate('player');
 					return res.send({ player: next_player[0].player });
 				} else {
 					const next_player = await GamePlayer.find({
 						game: game,
-						order: order + 1
+						order: parseInt(parseInt(order) + 1)
 					}).populate('player');
 					return res.send({ player: next_player[0].player });
 				}
