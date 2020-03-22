@@ -863,7 +863,7 @@ router.get('/currentPlayer', async (req, res) => {
 					player: played_cards.player._id
 				});
 				const players = await GamePlayer.find({ game: game });
-				if (order == players.length) {
+				if (order.order == players.length) {
 					const next_player = await GamePlayer.find({
 						game: game,
 						order: parseInt(1)
