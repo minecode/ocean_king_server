@@ -31,7 +31,9 @@ const getHashedPassword = password => {
 };
 
 UserSchema.pre('save', async function(next) {
-	this.password = getHashedPassword(this.password);
+	if (this.password !== undefined) {
+		this.password = getHashedPassword(this.password);
+	}
 
 	next();
 });
