@@ -1,0 +1,68 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add quequery-string
+
+PATH: 
+  C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\Docker\Docker\Resources\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\Yarn\bin\;C:\Program Files\Git\cmd;C:\Users\fh97\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\dotnet\;C:\Users\fh97\Anaconda3;C:\Users\fh97\Anaconda3\Library\mingw-w64\bin;C:\Users\fh97\Anaconda3\Library\usr\bin;C:\Users\fh97\Anaconda3\Library\bin;C:\Users\fh97\Anaconda3\Scripts;C:\Users\fh97\AppData\Local\Programs\Python\Python38\Scripts\;C:\Users\fh97\AppData\Local\Programs\Python\Python38\;C:\Users\fh97\AppData\Local\Microsoft\WindowsApps;C:\Users\fh97\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\fh97\AppData\Roaming\npm;C:\Users\fh97\AppData\Local\Yarn\bin;C:\Users\fh97\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\fh97\.dotnet\tools;C:\Program Files\Java\jdk-13.0.2\bin;C:\Program Files\platform-tools;;%USERPROFILE%\AppData\Local\Microsoft\WindowsApps
+
+Yarn version: 
+  1.19.1
+
+Node version: 
+  13.2.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/quequery-string: Not found
+      at Request.params.callback [as _callback] (C:\Program Files (x86)\Yarn\lib\cli.js:66035:18)
+      at Request.self.callback (C:\Program Files (x86)\Yarn\lib\cli.js:140564:22)
+      at Request.emit (events.js:210:5)
+      at Request.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:141536:10)
+      at Request.emit (events.js:210:5)
+      at IncomingMessage.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:141458:12)
+      at Object.onceWrapper (events.js:299:28)
+      at IncomingMessage.emit (events.js:215:7)
+      at endReadableNT (_stream_readable.js:1200:12)
+      at processTicksAndRejections (internal/process/task_queues.js:80:21)
+
+npm manifest: 
+  {
+  	"name": "skull_king_server",
+  	"version": "1.0.0",
+  	"description": "",
+  	"main": "app.js",
+  	"dependencies": {
+  		"bcryptjs": "^2.4.3",
+  		"body-parser": "^1.19.0",
+  		"crypto": "^1.0.1",
+  		"express": "^4.15.2",
+  		"mongoose": "^5.9.4",
+  		"mysql": "^2.18.1",
+  		"passport-facebook": "^3.0.0",
+  		"passport-google-oauth20": "^2.0.0",
+  		"pg": "^7.18.2",
+  		"socket.io": "^2.3.0",
+  		"socket.io-client": "^2.3.0"
+  	},
+  	"devDependencies": {},
+  	"scripts": {
+  		"test": "echo \"Error: no test specified\" && exit 1"
+  	},
+  	"repository": {
+  		"type": "git",
+  		"url": "git+https://github.com/fabiohfab/skull_king_server.git"
+  	},
+  	"author": "",
+  	"license": "ISC",
+  	"bugs": {
+  		"url": "https://github.com/fabiohfab/skull_king_server/issues"
+  	},
+  	"homepage": "https://github.com/fabiohfab/skull_king_server#readme"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

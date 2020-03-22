@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('../models/User');
+const UserGoogle = require('../models/UserGoogle');
 const router = express.Router();
 const io = require('socket.io-client');
 const crypto = require('crypto');
@@ -33,6 +34,26 @@ router.post('/login', async (req, res) => {
 			return res.send({ user });
 		}
 		return res.status(401).send('Username or password incorrect');
+	} catch (err) {
+		console.log(err);
+		return res.status(400).send({ error: 'Authentication failed' });
+	}
+});
+
+router.post('/googleLogin', async (req, res) => {
+	const { user } = req.body;
+	try {
+		const dataBase_user = await UserGoogle.findOne({ email: user.email });
+		if (dataBase_user) {
+			return res.send({ dataBase_user });
+		} else {
+			const new_user = await UserGoogle.create({
+				name: req.body.name,
+				email: req.body.email,
+				photoUrl: req.body.photoUrl
+			});
+			return res.send({ new_user });
+		}
 	} catch (err) {
 		console.log(err);
 		return res.status(400).send({ error: 'Authentication failed' });
