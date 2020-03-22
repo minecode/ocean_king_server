@@ -872,7 +872,7 @@ router.get('/currentPlayer', async (req, res) => {
 				} else {
 					const next_player = await GamePlayer.find({
 						game: game,
-						order: parseInt(parseInt(order) + 1)
+						order: parseInt(parseInt(order.order) + 1)
 					}).populate('player');
 					return res.send({ player: next_player[0].player });
 				}
