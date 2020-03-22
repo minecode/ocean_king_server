@@ -43,14 +43,13 @@ router.post('/login', async (req, res) => {
 router.post('/googleLogin', async (req, res) => {
 	const { user } = req.body;
 	try {
-		const dataBase_user = await UserGoogle.findOne({ email: user.email });
+		const dataBase_user = await User.findOne({ email: user.email });
 		if (dataBase_user) {
 			return res.send({ dataBase_user });
 		} else {
-			const new_user = await UserGoogle.create({
+			const new_user = await User.create({
 				name: user.name,
-				email: user.email,
-				photoUrl: user.photoUrl
+				email: user.email
 			});
 			return res.send({ new_user });
 		}
