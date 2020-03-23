@@ -259,6 +259,8 @@ async function calculatePontuations(game) {
 							countP = 0;
 							hasPirates = false;
 
+							console.log(temp_played_cards);
+
 							temp_played_cards.forEach((e, i) => {
 								if (e.card[0].color[0] === 's') {
 									hasSkull = true;
@@ -273,6 +275,14 @@ async function calculatePontuations(game) {
 								}
 							});
 
+							console.log(
+								hasSkull,
+								hasS,
+								hasPirates,
+								parseInt(countP),
+								countP,
+								pont
+							);
 							if (hasS && hasSkull) {
 								pont += 50;
 							} else if (
@@ -291,6 +301,8 @@ async function calculatePontuations(game) {
 						pont += bet.value * 20;
 
 						await asyncForEach(wins, async (t, i) => {
+							console.log(temp_played_cards);
+
 							temp_played_cards = await PlayedCards.find({
 								round: round._id,
 								turn: t._id
@@ -315,6 +327,14 @@ async function calculatePontuations(game) {
 								}
 							});
 
+							console.log(
+								hasSkull,
+								hasS,
+								hasPirates,
+								parseInt(countP),
+								countP,
+								pont
+							);
 							if (hasS && hasSkull) {
 								pont += 50;
 							} else if (
