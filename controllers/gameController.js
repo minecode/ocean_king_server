@@ -478,6 +478,7 @@ router.post('/cards', async (req, res) => {
 						.to(game._id)
 						.emit('card played', game._id, card, user);
 
+					await timeout(1000);
 					if (players.length === total_playedCards.length) {
 						req.app
 							.get('io')
@@ -575,11 +576,6 @@ router.post('/cards', async (req, res) => {
 										status: 'place bets',
 										_id: game._id
 									});
-
-									req.app
-										.get('io')
-										.to(game._id)
-										.emit('round finish');
 
 									req.app
 										.get('io')

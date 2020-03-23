@@ -60,7 +60,7 @@ io.on('connection', function(socket) {
 		console.log(socket.nickname + ' join room ' + room);
 	});
 	socket.on('leave room', function(room, user) {
-		socket.to(room).emit('user leave', user);
+		socket.to(room).emit('user leave', user.nickname);
 		socket.leave(room);
 		console.log(socket.nickname + ' leave room ' + room);
 	});
