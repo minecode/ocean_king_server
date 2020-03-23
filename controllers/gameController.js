@@ -242,6 +242,7 @@ async function calculatePontuations(game) {
 				let hasSkull = false;
 				let hasS = false;
 				let countP = 0;
+				let hasPirates = false;
 
 				if (bet.value === 0) {
 					if (wins.length === 0) {
@@ -256,6 +257,7 @@ async function calculatePontuations(game) {
 							hasSkull = false;
 							hasS = false;
 							countP = 0;
+							hasPirates = false;
 
 							temp_played_cards.forEach((e, i) => {
 								if (e.card[0].color[0] === 's') {
@@ -263,15 +265,21 @@ async function calculatePontuations(game) {
 								} else if (e.card[0].color[0] === 'm') {
 									hasS = true;
 								} else if (e.card[0].color[0] === 'p') {
+									hasPirates = true;
 									countP += 1;
 								} else if (e.card[0].color[0] === 'b') {
+									hasPirates = true;
 									countP += 1;
 								}
 							});
 
 							if (hasS && hasSkull) {
 								pont += 50;
-							} else if (hasSkull && countP > 0) {
+							} else if (
+								hasSkull &&
+								parseInt(countP) > 0 &&
+								hasPirates
+							) {
 								pont += 30 * countP;
 							}
 						});
@@ -291,6 +299,7 @@ async function calculatePontuations(game) {
 							hasSkull = false;
 							hasS = false;
 							countP = 0;
+							hasPirates = false;
 
 							temp_played_cards.forEach((e, i) => {
 								if (e.card[0].color[0] === 's') {
@@ -298,15 +307,21 @@ async function calculatePontuations(game) {
 								} else if (e.card[0].color[0] === 'm') {
 									hasS = true;
 								} else if (e.card[0].color[0] === 'p') {
+									hasPirates = true;
 									countP += 1;
 								} else if (e.card[0].color[0] === 'b') {
+									hasPirates = true;
 									countP += 1;
 								}
 							});
 
 							if (hasS && hasSkull) {
 								pont += 50;
-							} else if (hasSkull && countP > 0) {
+							} else if (
+								hasSkull &&
+								parseInt(countP) > 0 &&
+								hasPirates
+							) {
 								pont += 30 * countP;
 							}
 						});
