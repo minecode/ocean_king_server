@@ -42,6 +42,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/googleLogin', async (req, res) => {
 	const { user } = req.body;
+	console.log(req.body);
 	try {
 		const dataBase_user = await User.findOne({ email: user.email });
 		if (dataBase_user) {
