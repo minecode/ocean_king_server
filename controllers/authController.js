@@ -49,7 +49,7 @@ router.post('/googleLogin', async (req, res) => {
 			return res.send({ dataBase_user });
 		} else {
 			const new_user = await User.create({
-				name: user.name,
+				name: user.displayName,
 				email: user.email
 			});
 			return res.send({ new_user });
