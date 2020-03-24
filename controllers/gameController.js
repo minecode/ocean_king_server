@@ -229,6 +229,9 @@ async function calculatePontuations(game) {
 		await asyncForEach(players, async (player, i) => {
 			let pont = 0;
 			await asyncForEach(rounds, async (round, j) => {
+				console.log(player.player.name);
+				console.log(round.roundNumber);
+
 				const bet = await Bet.findOne({
 					round: round._id,
 					player: player.player._id
@@ -259,6 +262,7 @@ async function calculatePontuations(game) {
 							countP = 0;
 							hasPirates = false;
 
+							console.log(t.turnNumber);
 							console.log(temp_played_cards);
 
 							temp_played_cards.forEach((e, i) => {
@@ -301,8 +305,6 @@ async function calculatePontuations(game) {
 						pont += bet.value * 20;
 
 						await asyncForEach(wins, async (t, i) => {
-							console.log(temp_played_cards);
-
 							temp_played_cards = await PlayedCards.find({
 								round: round._id,
 								turn: t._id
@@ -312,6 +314,8 @@ async function calculatePontuations(game) {
 							hasS = false;
 							countP = 0;
 							hasPirates = false;
+							console.log(t.turnNumber);
+							console.log(temp_played_cards);
 
 							temp_played_cards.forEach((e, i) => {
 								if (e.card[0].color[0] === 's') {
