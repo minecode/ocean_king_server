@@ -263,9 +263,9 @@ async function calculatePontuations(game) {
 							hasPirates = false;
 
 							console.log(t.turnNumber);
-							console.log(temp_played_cards);
 
 							temp_played_cards.forEach((e, i) => {
+								console.log(e);
 								if (e.card[0].color[0] === 's') {
 									hasSkull = true;
 								} else if (e.card[0].color[0] === 'm') {
@@ -315,9 +315,9 @@ async function calculatePontuations(game) {
 							countP = 0;
 							hasPirates = false;
 							console.log(t.turnNumber);
-							console.log(temp_played_cards);
 
 							temp_played_cards.forEach((e, i) => {
+								console.log(e);
 								if (e.card[0].color[0] === 's') {
 									hasSkull = true;
 								} else if (e.card[0].color[0] === 'm') {
