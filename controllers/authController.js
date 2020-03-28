@@ -1,6 +1,5 @@
 const express = require('express');
 const User = require('../models/User');
-const UserGoogle = require('../models/UserGoogle');
 const router = express.Router();
 const io = require('socket.io-client');
 const crypto = require('crypto');
@@ -48,20 +47,20 @@ router.post('/googleLogin', async (req, res) => {
 		if (dataBase_user) {
 			return res.send({ dataBase_user });
 		} else {
-			if(user.displayName) {
+			if (user.displayName) {
 				const new_user = await User.create({
 					name: user.displayName,
 					email: user.email
 				});
 				return res.send({ new_user });
-				} 
-			if(user.name) {
+			}
+			if (user.name) {
 				const new_user = await User.create({
 					name: user.name,
 					email: user.email
 				});
 				return res.send({ new_user });
-			} 
+			}
 			return res.status(400).send({ error: 'Authentication failed' });
 		}
 	} catch (err) {

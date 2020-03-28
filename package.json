@@ -1,5 +1,5 @@
 {
-	"name": "skull_king_server",
+	"name": "ocean_king_server",
 	"version": "1.0.0",
 	"description": "",
 	"main": "app.js",
@@ -22,12 +22,12 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/fabiohfab/skull_king_server.git"
+		"url": "git+https://github.com/minecode/ocean_king_server.git"
 	},
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/fabiohfab/skull_king_server/issues"
+		"url": "https://github.com/minecode/ocean_king_server/issues"
 	},
-	"homepage": "https://github.com/fabiohfab/skull_king_server#readme"
+	"homepage": "https://github.com/minecode/ocean_king_server#readme"
 }
