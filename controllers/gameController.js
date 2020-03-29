@@ -273,7 +273,7 @@ async function calculatePontuations(game) {
 								} else if (e.card[0].color[0] === 'p') {
 									hasPirates = true;
 									countP += 1;
-								} else if (e.card[0].color[0] === 'b') {
+								} else if (e.card[0].color === 'binary') {
 									hasPirates = true;
 									countP += 1;
 								}
