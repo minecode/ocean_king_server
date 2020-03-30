@@ -686,7 +686,6 @@ router.post('/cards', async (req, res) => {
 							.emit('next play', next_player);
 						// emit to other player play
 					}
-					console.log(new_cards);
 					res.send({ new_cards });
 				} else {
 					res.status(400).send({
