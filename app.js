@@ -47,7 +47,10 @@ io.on('connection', function(socket) {
 	socket.on('disconnect', function() {
 		console.log(socket.nickname + ' disconnected');
 	});
-	socket.on('forceDisconnect', function() {
+	socket.on('forceDisconnect', function(room, user) {
+		socket.to(room).emit('user leave', user);
+		socket.leave(room);
+		console.log(socket.nickname + ' leave room ' + room);
 		socket.disconnect();
 	});
 	socket.on('set nickname', function(msg) {

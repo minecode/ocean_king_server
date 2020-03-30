@@ -481,7 +481,7 @@ router.post('/cards', async (req, res) => {
 						}
 					}
 				});
-				const new_cards = await Cards.findOneAndUpdate(
+				let new_cards = await Cards.findOneAndUpdate(
 					{
 						round: round._id,
 						player: user
@@ -491,6 +491,11 @@ router.post('/cards', async (req, res) => {
 					},
 					{ useFindAndModify: false }
 				);
+
+				new_cards = await Cards.findOne({
+					round: round._id,
+					player: user
+				});
 
 				const turn = await Turn.findOne({ round: round._id }).sort({
 					createdAt: -1
@@ -681,7 +686,7 @@ router.post('/cards', async (req, res) => {
 							.emit('next play', next_player);
 						// emit to other player play
 					}
-
+					console.log(new_cards);
 					res.send({ new_cards });
 				} else {
 					res.status(400).send({
