@@ -8,6 +8,7 @@ const Cards = require('../models/Cards');
 const GamePlayer = require('../models/GamePlayer');
 const PlayedCards = require('../models/PlayedCards');
 const ScoreBoard = require('../models/ScoreBoard');
+const Message = require('../models/Message');
 const router = express.Router();
 
 const cards = [
@@ -819,6 +820,34 @@ router.get('/playersStatus', async (req, res) => {
 	} catch (err) {
 		console.log(err);
 		return res.status(400).send({ error: 'Cannot get player status' });
+	}
+});
+
+router.get('/message', async (req, res) => {
+	const { game } = req.query;
+	try {
+		const messages = await Message.find({ game: game }).populate('player');
+		return res.send({ messages });
+	} catch (err) {
+		return res.status(400).send({ error: 'Cannot get messages' });
+	}
+});
+
+router.post('/message', async (req, res) => {
+	const { game, message, user } = req.body;
+	try {
+		const new_message = await Message.create({
+			game: game,
+			player: user,
+			message: message,
+		});
+
+		req.app.get('io').to(game).emit('new message sended');
+
+		return res.send({ new_message });
+	} catch (err) {
+		console.log(err);
+		return res.status(400).send({ error: 'Error while sending message' });
 	}
 });
 
