@@ -80,7 +80,7 @@ const cards = [
 	{ color: 'p3', value: '0' },
 	{ color: 'p4', value: '0' },
 	{ color: 'p5', value: '0' },
-	{ color: 'sk', value: '0' }
+	{ color: 'sk', value: '0' },
 ];
 
 async function asyncForEach(array, callback) {
@@ -219,7 +219,7 @@ function getWinner(playedCards) {
 }
 
 function timeout(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
+	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function calculatePontuations(game) {
@@ -234,11 +234,11 @@ async function calculatePontuations(game) {
 
 				const bet = await Bet.findOne({
 					round: round._id,
-					player: player.player._id
+					player: player.player._id,
 				});
 				const wins = await Turn.find({
 					round: round._id,
-					winner: player.player._id
+					winner: player.player._id,
 				});
 
 				let temp_played_cards = [];
@@ -254,7 +254,7 @@ async function calculatePontuations(game) {
 						await asyncForEach(wins, async (t, i) => {
 							temp_played_cards = await PlayedCards.find({
 								round: round._id,
-								turn: t._id
+								turn: t._id,
 							}).sort({ createdAt: 'asc' });
 
 							hasSkull = false;
@@ -307,7 +307,7 @@ async function calculatePontuations(game) {
 						await asyncForEach(wins, async (t, i) => {
 							temp_played_cards = await PlayedCards.find({
 								round: round._id,
-								turn: t._id
+								turn: t._id,
 							}).sort({ createdAt: 'asc' });
 
 							hasSkull = false;
@@ -325,7 +325,7 @@ async function calculatePontuations(game) {
 								} else if (e.card[0].color[0] === 'p') {
 									hasPirates = true;
 									countP += 1;
-								} else if (e.card[0].color[0] === 'b') {
+								} else if (e.card[0].color === 'binary') {
 									hasPirates = true;
 									countP += 1;
 								}
@@ -361,7 +361,7 @@ async function calculatePontuations(game) {
 				if (j + 1 === rounds.length) {
 					const score_board = await ScoreBoard.findOne({
 						game: game,
-						player: player.player._id
+						player: player.player._id,
 					});
 
 					if (score_board) {
@@ -375,7 +375,7 @@ async function calculatePontuations(game) {
 						await ScoreBoard.create({
 							game: game,
 							player: player.player._id,
-							points: pont
+							points: pont,
 						});
 						return true;
 					}
@@ -393,11 +393,11 @@ router.get('/', async (req, res) => {
 		);
 		if (games) {
 			return res.send({
-				games
+				games,
 			});
 		}
 		return res.status(200).send({
-			games: null
+			games: null,
 		});
 	} catch (err) {
 		return res.status(400).send({ error: 'Cannot get current games' });
@@ -408,29 +408,29 @@ router.get('/cards', async (req, res) => {
 	const { user, game } = req.query;
 	try {
 		const round = await Round.findOne({ game: game }).sort({
-			createdAt: -1
+			createdAt: -1,
 		});
 		if (round) {
 			const cards = await Cards.findOne({
 				round: round._id,
-				player: user
+				player: user,
 			});
 			if (cards) {
 				res.send({ cards });
 			} else {
 				res.status(400).send({
-					error: 'Cannot get the cards of a player (0)'
+					error: 'Cannot get the cards of a player (0)',
 				});
 			}
 		} else {
 			res.status(400).send({
-				error: 'Cannot get the cards of a player (1)'
+				error: 'Cannot get the cards of a player (1)',
 			});
 		}
 	} catch (err) {
 		console.log(err);
 		res.status(400).send({
-			error: 'Cannot get the cards of a player (2)'
+			error: 'Cannot get the cards of a player (2)',
 		});
 	}
 });
@@ -445,7 +445,7 @@ router.get('/pontuations', async (req, res) => {
 		res.send({ pontuations: pontuations });
 	} catch (err) {
 		res.status(400).send({
-			error: 'Cannot get the pontuations'
+			error: 'Cannot get the pontuations',
 		});
 	}
 });
@@ -455,12 +455,12 @@ router.post('/cards', async (req, res) => {
 
 	try {
 		const round = await Round.findOne({ game: game._id }).sort({
-			createdAt: -1
+			createdAt: -1,
 		});
 		if (round) {
 			const cards_db = await Cards.findOne({
 				round: round._id,
-				player: user
+				player: user,
 			});
 			if (cards_db) {
 				temp = [];
@@ -484,21 +484,21 @@ router.post('/cards', async (req, res) => {
 				let new_cards = await Cards.findOneAndUpdate(
 					{
 						round: round._id,
-						player: user
+						player: user,
 					},
 					{
-						cards: temp
+						cards: temp,
 					},
 					{ useFindAndModify: false }
 				);
 
 				new_cards = await Cards.findOne({
 					round: round._id,
-					player: user
+					player: user,
 				});
 
 				const turn = await Turn.findOne({ round: round._id }).sort({
-					createdAt: -1
+					createdAt: -1,
 				});
 
 				if (turn) {
@@ -506,15 +506,15 @@ router.post('/cards', async (req, res) => {
 						round: round._id,
 						turn: turn._id,
 						player: user,
-						card: [card]
+						card: [card],
 					});
 
 					const players = await GamePlayer.find({
-						game: game
+						game: game,
 					}).populate('player');
 					const total_playedCards = await PlayedCards.find({
 						round: round._id,
-						turn: turn._id
+						turn: turn._id,
 					}).sort({ createdAt: 'asc' });
 
 					req.app
@@ -524,10 +524,7 @@ router.post('/cards', async (req, res) => {
 
 					await timeout(1000);
 					if (players.length === total_playedCards.length) {
-						req.app
-							.get('io')
-							.to(game._id)
-							.emit('turn finish');
+						req.app.get('io').to(game._id).emit('turn finish');
 
 						const winner = getWinner(total_playedCards);
 
@@ -538,7 +535,7 @@ router.post('/cards', async (req, res) => {
 						).sort({ createdAt: -1 });
 
 						const winner_player = await User.findOne({
-							_id: winner.player
+							_id: winner.player,
 						});
 
 						req.app
@@ -557,16 +554,16 @@ router.post('/cards', async (req, res) => {
 
 								const new_round = await Round.create({
 									game: game,
-									roundNumber: round.roundNumber + 1
+									roundNumber: round.roundNumber + 1,
 								});
 
 								const new_turn = await Turn.create({
 									round: new_round._id,
-									turnNumber: 1
+									turnNumber: 1,
 								});
 
 								const players = await GamePlayer.find({
-									game: game._id
+									game: game._id,
 								}).populate('player');
 
 								if (
@@ -602,7 +599,7 @@ router.post('/cards', async (req, res) => {
 											let temp = await Cards.create({
 												round: new_round._id,
 												player: players[i].player._id,
-												cards: v
+												cards: v,
 											});
 										}
 									);
@@ -610,7 +607,7 @@ router.post('/cards', async (req, res) => {
 									await Game.findOneAndUpdate(
 										{
 											status: 'in game',
-											_id: game._id
+											_id: game._id,
 										},
 										{ status: 'place bets' },
 										{ useFindAndModify: false }
@@ -618,7 +615,7 @@ router.post('/cards', async (req, res) => {
 
 									const temp_game = await Game.findOne({
 										status: 'place bets',
-										_id: game._id
+										_id: game._id,
 									});
 
 									req.app
@@ -649,13 +646,13 @@ router.post('/cards', async (req, res) => {
 							const first_player_to_play = await GamePlayer.findOne(
 								{
 									game: game,
-									player: winner_player
+									player: winner_player,
 								}
 							).populate('player');
 
 							await Turn.create({
 								round: round._id,
-								turnNumber: turns.length + 1
+								turnNumber: turns.length + 1,
 							});
 
 							req.app
@@ -667,7 +664,7 @@ router.post('/cards', async (req, res) => {
 					} else {
 						const player_played = await GamePlayer.findOne({
 							game: game,
-							player: user
+							player: user,
 						}).populate('player');
 						let order = null;
 						if (player_played.order == players.length) {
@@ -678,7 +675,7 @@ router.post('/cards', async (req, res) => {
 
 						const next_player = await GamePlayer.findOne({
 							game: game,
-							order: order
+							order: order,
 						}).populate('player');
 						req.app
 							.get('io')
@@ -689,23 +686,23 @@ router.post('/cards', async (req, res) => {
 					res.send({ new_cards });
 				} else {
 					res.status(400).send({
-						error: 'Cannot post the cards of a player (-1)'
+						error: 'Cannot post the cards of a player (-1)',
 					});
 				}
 			} else {
 				res.status(400).send({
-					error: 'Cannot post the cards of a player (0)'
+					error: 'Cannot post the cards of a player (0)',
 				});
 			}
 		} else {
 			res.status(400).send({
-				error: 'Cannot post the cards of a player (1)'
+				error: 'Cannot post the cards of a player (1)',
 			});
 		}
 	} catch (err) {
 		console.log(err);
 		res.status(400).send({
-			error: 'Cannot post the cards of a player (2)'
+			error: 'Cannot post the cards of a player (2)',
 		});
 	}
 });
@@ -716,17 +713,17 @@ router.post('/', async (req, res) => {
 		const ref = await GamePlayer.findOne({ player: user });
 		if (ref) {
 			return res.status(400).send({
-				error: 'Cannot create a new game while you are in another'
+				error: 'Cannot create a new game while you are in another',
 			});
 		}
 		const game = await Game.create({
 			...req.body,
-			createdBy: req.body.user
+			createdBy: req.body.user,
 		});
 		const gamePlayer = await GamePlayer.create({
 			game: game.id,
 			player: user,
-			order: 1
+			order: 1,
 		});
 
 		// socket.emit('register', { user });
@@ -742,22 +739,22 @@ router.get('/playersStatus', async (req, res) => {
 
 	try {
 		const round = await Round.findOne({ game: game }).sort({
-			createdAt: -1
+			createdAt: -1,
 		});
 		if (round) {
 			const turn = await Turn.findOne({ round: round._id }).sort({
-				createdAt: -1
+				createdAt: -1,
 			});
 
 			const players = await GamePlayer.find({ game: game })
 				.sort({
-					order: 1
+					order: 1,
 				})
 				.populate('player');
 
 			let temp_played_cards = await PlayedCards.find({
 				round: round._id,
-				turn: turn._id
+				turn: turn._id,
 			})
 				.sort({ player: 1 })
 				.populate('player');
@@ -783,14 +780,14 @@ router.get('/playersStatus', async (req, res) => {
 						round: round._id,
 						turn: turn._id,
 						card: [{ color: 'back', value: 0 }],
-						player: p.player
+						player: p.player,
 					});
 				} else {
 					played_cards.push(instance);
 				}
 				const temp = await Bet.findOne({
 					round: round._id,
-					player: p.player._id
+					player: p.player._id,
 				})
 					.sort({ player: 1 })
 					.populate('player');
@@ -802,7 +799,7 @@ router.get('/playersStatus', async (req, res) => {
 			// 	.populate('player');
 
 			const number_of_wins = await Turn.find({ round: round._id }).sort({
-				player: 1
+				player: 1,
 			});
 
 			number_of_wins.map((turn, i) => {
@@ -845,13 +842,13 @@ router.get('/current', async (req, res) => {
 		);
 		if (current_game) {
 			const round = await Round.findOne({ game: current_game._id }).sort({
-				createdAt: -1
+				createdAt: -1,
 			});
 			const rounds = await Round.find({ game: current_game._id });
 			if (round) {
 				const bet = await Bet.findOne({
 					player: user,
-					round: round._id
+					round: round._id,
 				});
 				if (bet) {
 					return res.send({ current_game, round, bet });
@@ -876,11 +873,11 @@ router.get('/inGame', async (req, res) => {
 			const game = await Game.findOne({ _id: ref.game });
 			return res.send({
 				inGame: true,
-				game: game
+				game: game,
 			});
 		}
 		return res.send({
-			inGame: false
+			inGame: false,
 		});
 	} catch (err) {
 		console.log(err);
@@ -894,14 +891,14 @@ router.post('/join', async (req, res) => {
 	try {
 		if (await GamePlayer.findOne({ player: user })) {
 			return res.status(400).send({
-				error: 'Cannot join in a new game while you are in another'
+				error: 'Cannot join in a new game while you are in another',
 			});
 		}
 		const players = await GamePlayer.find({ game: req.body.game });
 		const gamePlayer = await GamePlayer.create({
 			game: req.body.game,
 			player: user,
-			order: players.length + 1
+			order: players.length + 1,
 		});
 
 		return res.send({ gamePlayer });
@@ -915,33 +912,33 @@ router.get('/currentPlayer', async (req, res) => {
 	const { game } = req.query;
 	try {
 		const round = await Round.findOne({ game: game }).sort({
-			createdAt: -1
+			createdAt: -1,
 		});
 		if (round) {
 			const turn = await Turn.findOne({ round: round._id }).sort({
-				createdAt: -1
+				createdAt: -1,
 			});
 			const played_cards = await PlayedCards.findOne({
 				round: round._id,
-				turn: turn._id
+				turn: turn._id,
 			})
 				.sort({ createdAt: -1 })
 				.populate('player');
 			if (played_cards) {
 				const order = await GamePlayer.findOne({
-					player: played_cards.player._id
+					player: played_cards.player._id,
 				});
 				const players = await GamePlayer.find({ game: game });
 				if (order.order == players.length) {
 					const next_player = await GamePlayer.find({
 						game: game,
-						order: parseInt(1)
+						order: parseInt(1),
 					}).populate('player');
 					return res.send({ player: next_player[0].player });
 				} else {
 					const next_player = await GamePlayer.find({
 						game: game,
-						order: parseInt(parseInt(order.order) + 1)
+						order: parseInt(parseInt(order.order) + 1),
 					}).populate('player');
 					return res.send({ player: next_player[0].player });
 				}
@@ -949,35 +946,35 @@ router.get('/currentPlayer', async (req, res) => {
 				if (round.roundNumber == 1) {
 					const next_player = await GamePlayer.find({
 						game: game,
-						order: 1
+						order: 1,
 					}).populate('player');
 					return res.send({ player: next_player[0].player });
 				} else {
 					const player_temp = await User.findOne({
-						_id: turn.winner
+						_id: turn.winner,
 					});
 					if (player_temp) {
 						return res.send({ player: player_temp });
 					} else {
 						const turns = await Turn.find({
-							round: round._id
+							round: round._id,
 						}).sort({
-							createdAt: -1
+							createdAt: -1,
 						});
 						if (turns[1]) {
 							const player_temp2 = await User.findOne({
-								_id: turns[1].winner
+								_id: turns[1].winner,
 							});
 							return res.send({ player: player_temp2 });
 						} else {
 							const rounds = await Round.find({
-								game: game
+								game: game,
 							}).sort({ createdAt: -1 });
 							const new_turn_temp = await Turn.findOne({
-								round: rounds[1]._id
+								round: rounds[1]._id,
 							}).sort({ createdAt: -1 });
 							const player_temp3 = await User.findOne({
-								_id: new_turn_temp.winner
+								_id: new_turn_temp.winner,
 							});
 							return res.send({ player: player_temp3 });
 						}
@@ -999,7 +996,7 @@ router.post('/leave', async (req, res) => {
 	try {
 		if (!(await GamePlayer.findOne({ player: user }))) {
 			return res.status(400).send({
-				error: 'Cannot leave the game if you are not inside it'
+				error: 'Cannot leave the game if you are not inside it',
 			});
 		}
 		const gamePlayer = await GamePlayer.findOneAndRemove(
@@ -1023,10 +1020,7 @@ router.post('/leave', async (req, res) => {
 					{ status: 'finished' },
 					{ useFindAndModify: false }
 				);
-				req.app
-					.get('io')
-					.to(id)
-					.emit('game finished');
+				req.app.get('io').to(id).emit('game finished');
 			}
 		}
 
@@ -1043,17 +1037,17 @@ router.post('/start', async (req, res) => {
 	try {
 		const current = await Game.findOne({
 			status: 'in queue',
-			createdBy: user
+			createdBy: user,
 		});
 		if (!current) {
 			return res.status(400).send({
 				error:
-					'Cannot start the game if you are not the leader or if the game is not in queue'
+					'Cannot start the game if you are not the leader or if the game is not in queue',
 			});
 		}
 
 		const players = await GamePlayer.find({
-			game: current._id
+			game: current._id,
 		}).populate('player');
 
 		const round = await Round.create({ game: current._id, roundNumber: 1 });
@@ -1069,7 +1063,7 @@ router.post('/start', async (req, res) => {
 				let temp = await Cards.create({
 					round: round._id,
 					player: players[i].player._id,
-					cards: v
+					cards: v,
 				});
 			}
 		);
@@ -1077,7 +1071,7 @@ router.post('/start', async (req, res) => {
 		await Game.findOneAndUpdate(
 			{
 				status: 'in queue',
-				createdBy: user
+				createdBy: user,
 			},
 			{ status: 'place bets' },
 			{ useFindAndModify: false }
@@ -1085,13 +1079,10 @@ router.post('/start', async (req, res) => {
 
 		const game = await Game.findOne({
 			status: 'place bets',
-			createdBy: user
+			createdBy: user,
 		});
 
-		req.app
-			.get('io')
-			.to(game._id)
-			.emit('place bets', 1);
+		req.app.get('io').to(game._id).emit('place bets', 1);
 
 		return res.send({ game, round, turn });
 	} catch (err) {
@@ -1106,11 +1097,11 @@ router.post('/stop', async (req, res) => {
 	try {
 		if (await Game.findOne({ status: 'in queue', createdBy: user })) {
 			return res.status(400).send({
-				error: 'Cannot stop the game if you are not the leader'
+				error: 'Cannot stop the game if you are not the leader',
 			});
 		}
 		const game = await Game.findOneAndUpdate({
-			status: 'stop'
+			status: 'stop',
 		});
 
 		return res.send({ game });
@@ -1125,46 +1116,43 @@ router.post('/bet', async (req, res) => {
 	try {
 		const current_game = await Game.findOne({
 			status: 'place bets',
-			_id: game
+			_id: game,
 		});
 		if (current_game) {
 			const round = await Round.findOne({ game: current_game._id }).sort({
-				createdAt: -1
+				createdAt: -1,
 			});
 			if (round) {
 				const bet = await Bet.findOne({
 					round: round._id,
-					player: user
+					player: user,
 				});
 				if (!bet) {
 					const new_bet = await Bet.create({
 						round: round._id,
 						player: user,
-						value: value
+						value: value,
 					});
 					const bets = await Bet.find({ round: round._id });
 					const players = await GamePlayer.find({
-						game: game
+						game: game,
 					}).populate('player');
 					if (bets && players) {
 						if (bets.length == players.length) {
 							await Game.findOneAndUpdate(
 								{
 									status: 'place bets',
-									_id: game
+									_id: game,
 								},
 								{ status: 'in game' },
 								{ useFindAndModify: false }
 							);
 
-							req.app
-								.get('io')
-								.to(game)
-								.emit('start round');
+							req.app.get('io').to(game).emit('start round');
 							if (round.roundNumber === 1) {
 								const player = await GamePlayer.findOne({
 									game: game,
-									order: 1
+									order: 1,
 								}).populate('player');
 								req.app
 									.get('io')
@@ -1173,11 +1161,11 @@ router.post('/bet', async (req, res) => {
 							} else {
 								const last_round = await Round.find({
 									game: game,
-									roundNumber: round.roundNumber - 1
+									roundNumber: round.roundNumber - 1,
 								});
 
 								const last_turn = await Turn.findOne({
-									round: last_round
+									round: last_round,
 								}).populate('winner');
 
 								req.app
@@ -1190,12 +1178,12 @@ router.post('/bet', async (req, res) => {
 					res.send({ new_bet });
 				} else {
 					return res.status(400).send({
-						error: 'You have already a bet to this round'
+						error: 'You have already a bet to this round',
 					});
 				}
 			} else {
 				return res.status(400).send({
-					error: 'Is not possible place a bet to this round'
+					error: 'Is not possible place a bet to this round',
 				});
 			}
 		} else {
@@ -1210,4 +1198,4 @@ router.post('/bet', async (req, res) => {
 	}
 });
 
-module.exports = app => app.use('/game', router);
+module.exports = (app) => app.use('/game', router);
