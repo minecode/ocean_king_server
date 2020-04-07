@@ -387,6 +387,34 @@ async function calculatePontuations(game) {
 	return false;
 }
 
+router.get('/scoreboards/games', async (req, res) => {
+	try {
+		Game.aggregate([
+			{
+				$lookup: {
+					from: 'scoreboards',
+					localField: '_id',
+					foreignField: 'game',
+					as: 'game_scoreboard',
+				},
+			},
+			{
+				$match: {
+					game_scoreboard: {
+						$ne: [],
+					},
+				},
+			},
+		]).then(function (result) {
+			return res.status(200).send(result);
+		});
+	} catch (err) {
+		return res.status(400).send({ error: 'Cannot get scoreboards' });
+	}
+});
+
+router.get('/scoreboards/players', async (req, res) => {});
+
 router.get('/', async (req, res) => {
 	try {
 		const games = await Game.find({ status: 'in queue' }).populate(
