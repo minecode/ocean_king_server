@@ -12,76 +12,76 @@ const Message = require('../models/Message');
 const router = express.Router();
 
 const cards = [
-	{ color: 'flag1', value: '0' },
-	{ color: 'flag2', value: '0' },
-	{ color: 'flag3', value: '0' },
-	{ color: 'flag4', value: '0' },
-	{ color: 'flag5', value: '0' },
+	{ color: 'flag1', value: '0', index: 0 },
+	{ color: 'flag2', value: '0', index: 1 },
+	{ color: 'flag3', value: '0', index: 2 },
+	{ color: 'flag4', value: '0', index: 3 },
+	{ color: 'flag5', value: '0', index: 4 },
 	// { color: 'red', value: '0' },
-	{ color: 'red', value: '1' },
-	{ color: 'red', value: '2' },
-	{ color: 'red', value: '3' },
-	{ color: 'red', value: '4' },
-	{ color: 'red', value: '5' },
-	{ color: 'red', value: '6' },
-	{ color: 'red', value: '7' },
-	{ color: 'red', value: '8' },
-	{ color: 'red', value: '9' },
-	{ color: 'red', value: '10' },
-	{ color: 'red', value: '11' },
-	{ color: 'red', value: '12' },
+	{ color: 'red', value: '1', index: 5 },
+	{ color: 'red', value: '2', index: 6 },
+	{ color: 'red', value: '3', index: 7 },
+	{ color: 'red', value: '4', index: 8 },
+	{ color: 'red', value: '5', index: 9 },
+	{ color: 'red', value: '6', index: 10 },
+	{ color: 'red', value: '7', index: 11 },
+	{ color: 'red', value: '8', index: 12 },
+	{ color: 'red', value: '9', index: 13 },
+	{ color: 'red', value: '10', index: 14 },
+	{ color: 'red', value: '11', index: 15 },
+	{ color: 'red', value: '12', index: 16 },
 	{ color: 'red', value: '13' },
 	// { color: 'blue', value: '0' },
-	{ color: 'blue', value: '1' },
-	{ color: 'blue', value: '2' },
-	{ color: 'blue', value: '3' },
-	{ color: 'blue', value: '4' },
-	{ color: 'blue', value: '5' },
-	{ color: 'blue', value: '6' },
-	{ color: 'blue', value: '7' },
-	{ color: 'blue', value: '8' },
-	{ color: 'blue', value: '9' },
-	{ color: 'blue', value: '10' },
-	{ color: 'blue', value: '11' },
-	{ color: 'blue', value: '12' },
-	{ color: 'blue', value: '13' },
+	{ color: 'blue', value: '1', index: 17 },
+	{ color: 'blue', value: '2', index: 18 },
+	{ color: 'blue', value: '3', index: 19 },
+	{ color: 'blue', value: '4', index: 20 },
+	{ color: 'blue', value: '5', index: 21 },
+	{ color: 'blue', value: '6', index: 22 },
+	{ color: 'blue', value: '7', index: 23 },
+	{ color: 'blue', value: '8', index: 24 },
+	{ color: 'blue', value: '9', index: 25 },
+	{ color: 'blue', value: '10', index: 26 },
+	{ color: 'blue', value: '11', index: 27 },
+	{ color: 'blue', value: '12', index: 28 },
+	{ color: 'blue', value: '13', index: 29 },
 	// { color: 'yellow', value: '0' },
-	{ color: 'yellow', value: '1' },
-	{ color: 'yellow', value: '2' },
-	{ color: 'yellow', value: '3' },
-	{ color: 'yellow', value: '4' },
-	{ color: 'yellow', value: '5' },
-	{ color: 'yellow', value: '6' },
-	{ color: 'yellow', value: '7' },
-	{ color: 'yellow', value: '8' },
-	{ color: 'yellow', value: '9' },
-	{ color: 'yellow', value: '10' },
-	{ color: 'yellow', value: '11' },
-	{ color: 'yellow', value: '12' },
-	{ color: 'yellow', value: '13' },
+	{ color: 'yellow', value: '1', index: 30 },
+	{ color: 'yellow', value: '2', index: 31 },
+	{ color: 'yellow', value: '3', index: 32 },
+	{ color: 'yellow', value: '4', index: 33 },
+	{ color: 'yellow', value: '5', index: 34 },
+	{ color: 'yellow', value: '6', index: 35 },
+	{ color: 'yellow', value: '7', index: 36 },
+	{ color: 'yellow', value: '8', index: 37 },
+	{ color: 'yellow', value: '9', index: 38 },
+	{ color: 'yellow', value: '10', index: 39 },
+	{ color: 'yellow', value: '11', index: 40 },
+	{ color: 'yellow', value: '12', index: 41 },
+	{ color: 'yellow', value: '13', index: 42 },
 	// { color: 'black', value: '0' },
-	{ color: 'black', value: '1' },
-	{ color: 'black', value: '2' },
-	{ color: 'black', value: '3' },
-	{ color: 'black', value: '4' },
-	{ color: 'black', value: '5' },
-	{ color: 'black', value: '6' },
-	{ color: 'black', value: '7' },
-	{ color: 'black', value: '8' },
-	{ color: 'black', value: '9' },
-	{ color: 'black', value: '10' },
-	{ color: 'black', value: '11' },
-	{ color: 'black', value: '12' },
-	{ color: 'black', value: '13' },
-	{ color: 'm1', value: '0' },
-	{ color: 'm2', value: '0' },
-	{ color: 'binary', value: '0' },
-	{ color: 'p1', value: '0' },
-	{ color: 'p2', value: '0' },
-	{ color: 'p3', value: '0' },
-	{ color: 'p4', value: '0' },
-	{ color: 'p5', value: '0' },
-	{ color: 'sk', value: '0' },
+	{ color: 'black', value: '1', index: 43 },
+	{ color: 'black', value: '2', index: 44 },
+	{ color: 'black', value: '3', index: 45 },
+	{ color: 'black', value: '4', index: 46 },
+	{ color: 'black', value: '5', index: 47 },
+	{ color: 'black', value: '6', index: 48 },
+	{ color: 'black', value: '7', index: 49 },
+	{ color: 'black', value: '8', index: 50 },
+	{ color: 'black', value: '9', index: 51 },
+	{ color: 'black', value: '10', index: 52 },
+	{ color: 'black', value: '11', index: 53 },
+	{ color: 'black', value: '12', index: 54 },
+	{ color: 'black', value: '13', index: 55 },
+	{ color: 'm1', value: '0', index: 56 },
+	{ color: 'm2', value: '0', index: 57 },
+	{ color: 'binary', value: '0', index: 58 },
+	{ color: 'p1', value: '0', index: 59 },
+	{ color: 'p2', value: '0', index: 60 },
+	{ color: 'p3', value: '0', index: 61 },
+	{ color: 'p4', value: '0', index: 62 },
+	{ color: 'p5', value: '0', index: 63 },
+	{ color: 'sk', value: '0', index: 64 },
 ];
 
 async function asyncForEach(array, callback) {
@@ -471,7 +471,7 @@ router.get('/scoreboards/games', async (req, res) => {
 	}
 });
 
-router.get('/scoreboards/players', async (req, res) => {
+router.get('/scoreboards/players/points', async (req, res) => {
 	try {
 		User.aggregate([
 			{
@@ -508,6 +508,7 @@ router.get('/scoreboards/players', async (req, res) => {
 					'rel_games.status': 'finished',
 				},
 			},
+			{ $sort: { 'rel_scoreboards.points': -1 } },
 			{
 				$group: {
 					_id: '$_id',
@@ -522,6 +523,123 @@ router.get('/scoreboards/players', async (req, res) => {
 			return res.status(200).send(results);
 		});
 	} catch (err) {
+		console.log(err);
+		return res
+			.status(400)
+			.send({ error: 'Cannot get scoreboards for players' });
+	}
+});
+
+router.get('/scoreboards/players/wins', async (req, res) => {
+	try {
+		User.aggregate([
+			{
+				$lookup: {
+					from: 'scoreboards',
+					localField: '_id',
+					foreignField: 'player',
+					as: 'rel_scoreboards',
+				},
+			},
+			{
+				$unwind: {
+					path: '$rel_scoreboards',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$lookup: {
+					from: 'games',
+					localField: 'rel_scoreboards.game',
+					foreignField: '_id',
+					as: 'rel_games',
+				},
+			},
+			{
+				$unwind: {
+					path: '$games',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$match: {
+					rel_games: { $ne: [] },
+					'rel_games.status': 'finished',
+				},
+			},
+			{ $sort: { 'rel_scoreboards.points': -1 } },
+			{
+				$group: {
+					_id: '$_id',
+					name: { $first: '$name' },
+					email: { $first: '$email' },
+					points: { $sum: '$rel_scoreboards.points' },
+					games: { $sum: 1 },
+				},
+			},
+			{ $sort: { points: -1 } },
+
+			{
+				$lookup: {
+					from: 'scoreboards',
+					localField: '_id',
+					foreignField: 'player',
+					as: 'rel_scoreboards',
+				},
+			},
+			{
+				$unwind: {
+					path: '$rel_scoreboards',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$lookup: {
+					from: 'games',
+					localField: 'rel_scoreboards.game',
+					foreignField: '_id',
+					as: 'rel_games',
+				},
+			},
+			{
+				$unwind: {
+					path: '$games',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$match: {
+					rel_games: { $ne: [] },
+					'rel_games.status': 'finished',
+				},
+			},
+			{ $sort: { 'rel_scoreboards.points': -1 } },
+			{
+				$group: {
+					_id: '$rel_scoreboards.game',
+					name: { $first: '$name' },
+					email: { $first: '$email' },
+					player: { $first: '$_id' },
+					games: { $first: '$games' },
+					points: { $first: '$rel_scoreboards.points' },
+				},
+			},
+			{
+				$group: {
+					_id: '$player',
+					name: { $first: '$name' },
+					email: { $first: '$email' },
+					points: { $sum: '$points' },
+					games: { $first: '$games' },
+					wins: { $sum: 1 },
+				},
+			},
+			{ $sort: { wins: -1 } },
+		]).exec(function (err, results) {
+			return res.status(200).send(results);
+		});
+	} catch (err) {
+		console.log(err);
 		return res
 			.status(400)
 			.send({ error: 'Cannot get scoreboards for players' });
@@ -730,7 +848,13 @@ router.post('/cards', async (req, res) => {
 											0,
 											players.length *
 												new_round.roundNumber
-										);
+										)
+										.sort((a, b) => {
+											if (a.index > b.index) {
+												return 1;
+											}
+											return -1;
+										});
 
 									await asyncForEach(
 										chunkArrayInGroups(
