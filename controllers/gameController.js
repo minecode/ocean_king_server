@@ -848,13 +848,7 @@ router.post('/cards', async (req, res) => {
 											0,
 											players.length *
 												new_round.roundNumber
-										)
-										.sort((a, b) => {
-											if (a.index > b.index) {
-												return 1;
-											}
-											return -1;
-										});
+										);
 
 									await asyncForEach(
 										chunkArrayInGroups(
@@ -865,7 +859,12 @@ router.post('/cards', async (req, res) => {
 											let temp = await Cards.create({
 												round: new_round._id,
 												player: players[i].player._id,
-												cards: v,
+												cards: v.sort((a, b) => {
+													if (a.index > b.index) {
+														return 1;
+													}
+													return -1;
+												}),
 											});
 										}
 									);
@@ -1358,7 +1357,12 @@ router.post('/start', async (req, res) => {
 				let temp = await Cards.create({
 					round: round._id,
 					player: players[i].player._id,
-					cards: v,
+					cards: v.sort((a, b) => {
+						if (a.index > b.index) {
+							return 1;
+						}
+						return -1;
+					}),
 				});
 			}
 		);
