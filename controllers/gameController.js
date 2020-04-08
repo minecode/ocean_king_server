@@ -387,33 +387,146 @@ async function calculatePontuations(game) {
 	return false;
 }
 
+router.get('/games', async (req, res) => {
+	try {
+		const games = await Game.find().sort({ createdAt: -1 });
+		return res.status(200).send(games);
+	} catch (err) {
+		return res.status(400).send({ error: 'Cannot get games' });
+	}
+});
+
 router.get('/scoreboards/games', async (req, res) => {
 	try {
 		Game.aggregate([
 			{
 				$lookup: {
 					from: 'scoreboards',
-					localField: '_id',
-					foreignField: 'game',
-					as: 'game_scoreboard',
+					let: { game: '$_id', status: '$status' },
+					pipeline: [
+						{
+							$match: {
+								$expr: {
+									$and: [
+										{ $eq: ['$$status', 'finished'] },
+										{ $eq: ['$$game', '$game'] },
+									],
+								},
+							},
+						},
+						{ $sort: { points: -1 } },
+					],
+					as: 'rel_scoreboards',
+				},
+			},
+			{
+				$unwind: {
+					path: '$rel_scoreboards',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$lookup: {
+					from: 'users',
+					localField: 'rel_scoreboards.player',
+					foreignField: '_id',
+					as: 'rel_scoreboards.rel_users',
+				},
+			},
+			{
+				$unwind: {
+					path: '$rel_scoreboards.rel_users',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$group: {
+					_id: '$_id',
+					createdAt: { $first: '$createdAt' },
+					status: { $first: '$status' },
+					scores: {
+						$push: {
+							player: '$rel_scoreboards.rel_users',
+							points: '$rel_scoreboards.points',
+						},
+					},
 				},
 			},
 			{
 				$match: {
-					game_scoreboard: {
-						$ne: [],
-					},
+					scores: { $ne: [{}] },
 				},
 			},
-		]).then(function (result) {
-			return res.status(200).send(result);
+			{
+				$sort: { createdAt: -1 },
+			},
+		]).exec(function (err, results) {
+			console.log(err);
+			return res.status(200).send(results);
 		});
 	} catch (err) {
-		return res.status(400).send({ error: 'Cannot get scoreboards' });
+		return res
+			.status(400)
+			.send({ error: 'Cannot get scoreboards for games' });
 	}
 });
 
-router.get('/scoreboards/players', async (req, res) => {});
+router.get('/scoreboards/players', async (req, res) => {
+	try {
+		User.aggregate([
+			{
+				$lookup: {
+					from: 'scoreboards',
+					localField: '_id',
+					foreignField: 'player',
+					as: 'rel_scoreboards',
+				},
+			},
+			{
+				$unwind: {
+					path: '$rel_scoreboards',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$lookup: {
+					from: 'games',
+					localField: 'rel_scoreboards.game',
+					foreignField: '_id',
+					as: 'rel_games',
+				},
+			},
+			{
+				$unwind: {
+					path: '$games',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$match: {
+					rel_games: { $ne: [] },
+					'rel_games.status': 'finished',
+				},
+			},
+			{
+				$group: {
+					_id: '$_id',
+					name: { $first: '$name' },
+					email: { $first: '$email' },
+					points: { $sum: '$rel_scoreboards.points' },
+					games: { $sum: 1 },
+				},
+			},
+			{ $sort: { points: -1 } },
+		]).exec(function (err, results) {
+			return res.status(200).send(results);
+		});
+	} catch (err) {
+		return res
+			.status(400)
+			.send({ error: 'Cannot get scoreboards for players' });
+	}
+});
 
 router.get('/', async (req, res) => {
 	try {
@@ -1064,17 +1177,18 @@ router.post('/leave', async (req, res) => {
 
 		const game_players = await GamePlayer.findOne({ game: id });
 		if (!game_players) {
-			const game = await Game.findOneAndUpdate(
-				{ _id: id },
-				{ status: 'finished' },
-				{ useFindAndModify: false }
-			);
+			const game = await Game.findOne({ _id: id });
+			if (game.status === 'in queue') {
+				await Game.findOneAndDelete({ _id: id });
+			} else if (game.status !== 'finished') {
+				await Game.findOneAndDelete({ _id: id });
+			}
 		} else {
 			const game = await Game.findOne({ _id: id });
-			if (game.status !== 'in queue') {
-				await Game.findOneAndUpdate(
+			if (game.status !== 'in queue' && game.status !== 'finished') {
+				await Game.findOne(
 					{ _id: id },
-					{ status: 'finished' },
+					{ status: 'canceled' },
 					{ useFindAndModify: false }
 				);
 				req.app.get('io').to(id).emit('game finished');
