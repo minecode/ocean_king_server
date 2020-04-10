@@ -1309,7 +1309,7 @@ router.post('/leave', async (req, res) => {
 		} else {
 			const game = await Game.findOne({ _id: id });
 			if (game.status !== 'in queue' && game.status !== 'finished') {
-				await Game.findOne(
+				await Game.findOneAndUpdate(
 					{ _id: id },
 					{ status: 'canceled' },
 					{ useFindAndModify: false }
