@@ -226,106 +226,73 @@ function timeout(ms) {
 }
 
 async function updateRightBets(game) {
-	const last_round = await Round.findOne({
+	const rounds = await Round.find({
 		game: game._id,
 	}).sort({ createdAt: -1 });
 
-	const bets = await Bet.find({
-		round: last_round._id,
-	});
-
-	await asyncForEach(bets, async (b, i) => {
-		const wins = await Turn.find({
+	await asyncForEach(rounds, async (last_round, k) => {
+		const bets = await Bet.find({
 			round: last_round._id,
-			winner: b.player,
 		});
-		if (wins && parseInt(wins.length) === parseInt(b.value)) {
-			try {
-				const upd_player = await Score.findOne({ player: b._id });
-				let query = {
-					right_bets: upd_player.right_bets + b.value,
-				};
-				if (parseInt(b.value) === 0) {
-					query = {
-						right_bets: upd_player.right_bets + b.value,
-						right_bets_zero: upd_player.right_bets_zero + b.value,
+
+		await asyncForEach(bets, async (b, i) => {
+			const wins = await Turn.find({
+				round: last_round._id,
+				winner: b.player,
+			});
+			if (wins && parseInt(wins.length) === parseInt(b.value)) {
+				try {
+					const upd_player = await Score.findOne({
+						player: b.player,
+					});
+					let query = {
+						right_bets: upd_player.right_bets + 1,
 					};
-				}
-				const updated = await Score.findOneAndUpdate(
-					{ player: b._id },
-					query,
-					{
-						new: true,
-						useFindAndModify: false,
+					if (parseInt(b.value) === 0) {
+						query = {
+							right_bets: upd_player.right_bets + 1,
+							right_bets_zero: upd_player.right_bets_zero + 1,
+						};
 					}
-				);
-			} catch (err2) {
-				let query = {
-					player: b._id,
-					right_bets: b.value,
-				};
-				if (parseInt(b.value) === 0) {
-					query = {
-						player: b._id,
-						right_bets: b.value,
-						right_bets_zero: b.value,
+					const updated = await Score.findOneAndUpdate(
+						{ player: b.player },
+						query,
+						{
+							new: true,
+							useFindAndModify: false,
+						}
+					);
+				} catch (err2) {
+					let query = {
+						player: b.player,
+						right_bets: 1,
 					};
+					if (parseInt(b.value) === 0) {
+						query = {
+							player: b.player,
+							right_bets: 1,
+							right_bets_zero: 1,
+						};
+					}
+					const score_player = await Score.create(query);
 				}
-				const score_player = await Score.create(query);
 			}
-		}
+		});
+
+		return;
 	});
 }
 
 async function updateMaxScoresWinsAndGames(game) {
-	const scoreboards = await ScoreBoard.find({
-		game: game._id,
-	}).sort({ points: -1 });
-
-	await asyncForEach(scoreboards, async (s, i) => {
-		const temp_p = Score.findOne({
-			player: s.player,
-		});
-		let hasNewMax = false;
-		if (parseInt(s.points) > parseInt(temp_p.max_score)) {
-			hasNewMax = true;
-		}
-		if (i === 0) {
-			let query = {
-				wins: temp_p.wins + 1,
-			};
-			if (hasNewMax) {
-				query = {
-					wins: temp_p.wins + 1,
-					max_score: temp_p.max_score,
-				};
-			}
-			const temp_p_updated = Score.findOneAndUpdate(
-				{ player: s.player },
-				query,
-				{ useFindAndModify: false }
-			);
-		} else {
-			if (hasNewMax) {
-				const temp_p_updated = Score.findOneAndUpdate(
-					{ player: s.player },
-					{
-						max_score: temp_p.max_score,
-					},
-					{ useFindAndModify: false }
-				);
-			}
-		}
-	});
-
-	const update_players = await GamePlayer.find({
+	const update_players = await ScoreBoard.find({
 		game: game._id,
 	});
+
 	await asyncForEach(update_players, async (p, i) => {
 		try {
-			const upd_player = await Score.findOne({ player: p._id });
+			const upd_player = await Score.findOne({ player: p.player });
 			const updated = await Score.findOneAndUpdate(
-				{ player: p._id },
+				{ player: p.player },
 				{ games: upd_player.games + 1 },
 				{
 					new: true,
@@ -334,11 +301,69 @@ async function updateMaxScoresWinsAndGames(game) {
 			);
 		} catch (err2) {
 			const score_player = await Score.create({
-				player: p._id,
+				player: p.player,
 				games: 1,
 			});
 		}
 	});
+
+	const scoreboards = await ScoreBoard.find({
+		game: game._id,
+	}).sort({ points: -1 });
+
+	await asyncForEach(scoreboards, async (s, i) => {
+		try {
+			const temp_p = await Score.findOne({
+				player: s.player,
+			});
+			let hasNewMax = false;
+			if (parseInt(s.points) > parseInt(temp_p.max_score)) {
+				hasNewMax = true;
+			}
+
+			if (i === 0) {
+				let query = {
+					wins: temp_p.wins + 1,
+				};
+				if (hasNewMax) {
+					query = {
+						wins: temp_p.wins + 1,
+						max_score: s.points,
+					};
+				}
+				const temp_p_updated = await Score.findOneAndUpdate(
+					{ player: s.player },
+					query,
+					{ useFindAndModify: false, new: true }
+				);
+			} else {
+				if (hasNewMax) {
+					const temp_p_updated = await Score.findOneAndUpdate(
+						{ player: s.player },
+						{
+							max_score: temp_p.max_score,
+						},
+						{ useFindAndModify: false, new: true }
+					);
+				}
+			}
+		} catch (err) {
+			if (i === 0) {
+				const temp_p_updated = await Score.create({
+					player: s.player,
+					wins: 1,
+					max_score: s.points,
+				});
+			} else {
+				const temp_p_updated = await Score.create({
+					player: s.player,
+					max_score: s.points,
+				});
+			}
+		}
+	});
+
+	return;
 }
 
 async function calculatePontuations(game) {
@@ -512,6 +537,23 @@ router.get('/games', async (req, res) => {
 	} catch (err) {
 		return res.status(400).send({ error: 'Cannot get games' });
 	}
+});
+
+router.get('/scoreboards/calculateScores', async (req, res) => {
+	const games = await Game.find().sort({
+		createdAt: -1,
+	});
+	await Score.deleteMany();
+	await asyncForEach(games, async (game, i) => {
+		await updateMaxScoresWinsAndGames(game);
+		await updateRightBets(game);
+	});
+
+	return res.status(200).send(await Score.find().populate('player'));
+});
+
+router.get('/scoreboards/scores', async (req, res) => {
+	return res.status(200).send(await Score.find().populate('player'));
 });
 
 router.get('/scoreboards/games', async (req, res) => {
@@ -948,8 +990,8 @@ router.post('/cards', async (req, res) => {
 									players.length * new_round.roundNumber >
 									cards.length
 								) {
-									await updateRightBets(game);
 									await updateMaxScoresWinsAndGames(game);
+									await updateRightBets(game);
 
 									const new_game = await Game.findOneAndUpdate(
 										{ _id: game._id },
@@ -1014,8 +1056,8 @@ router.post('/cards', async (req, res) => {
 								}
 							} else {
 								await calculatePontuations(game._id);
-								await updateRightBets(game);
 								await updateMaxScoresWinsAndGames(game);
+								await updateRightBets(game);
 
 								const temp_game = await Game.findOneAndUpdate(
 									{ _id: game._id },
