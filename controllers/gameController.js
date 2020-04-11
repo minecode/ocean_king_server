@@ -293,7 +293,10 @@ async function updateMaxScoresWinsAndGames(game) {
 			const upd_player = await Score.findOne({ player: p.player });
 			const updated = await Score.findOneAndUpdate(
 				{ player: p.player },
-				{ games: upd_player.games + 1 },
+				{
+					games: upd_player.games + 1,
+					points: upd_player.points + p.points,
+				},
 				{
 					new: true,
 					useFindAndModify: false,
@@ -302,6 +305,7 @@ async function updateMaxScoresWinsAndGames(game) {
 		} catch (err2) {
 			const score_player = await Score.create({
 				player: p.player,
+				points: p.points,
 				games: 1,
 			});
 		}

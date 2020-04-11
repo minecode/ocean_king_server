@@ -13,6 +13,10 @@ const ScoreSchema = new mongoose.Schema({
 		type: Number,
 		default: 0,
 	},
+	points: {
+		type: Number,
+		default: 0,
+	},
 	right_bets: {
 		type: Number,
 		default: 0,
