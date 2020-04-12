@@ -29,6 +29,54 @@ const ScoreSchema = new mongoose.Schema({
 		type: Number,
 		default: 0,
 	},
+	entry_plays: {
+		type: Number,
+		default: 0,
+	},
+	entry_wins: {
+		type: Number,
+		default: 0,
+	},
+	rb_at_1: {
+		type: Number,
+		default: 0,
+	},
+	rb_at_2: {
+		type: Number,
+		default: 0,
+	},
+	rb_at_3: {
+		type: Number,
+		default: 0,
+	},
+	rb_at_4: {
+		type: Number,
+		default: 0,
+	},
+	rb_at_5: {
+		type: Number,
+		default: 0,
+	},
+	rb_at_6: {
+		type: Number,
+		default: 0,
+	},
+	rb_at_7: {
+		type: Number,
+		default: 0,
+	},
+	rb_at_8: {
+		type: Number,
+		default: 0,
+	},
+	rb_at_9: {
+		type: Number,
+		default: 0,
+	},
+	rb_at_10: {
+		type: Number,
+		default: 0,
+	},
 	createdAt: {
 		type: Date,
 		default: Date.now,

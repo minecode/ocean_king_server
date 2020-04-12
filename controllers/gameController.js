@@ -225,64 +225,6 @@ function timeout(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function updateRightBets(game) {
-	const rounds = await Round.find({
-		game: game._id,
-	}).sort({ createdAt: -1 });
-
-	await asyncForEach(rounds, async (last_round, k) => {
-		const bets = await Bet.find({
-			round: last_round._id,
-		});
-
-		await asyncForEach(bets, async (b, i) => {
-			const wins = await Turn.find({
-				round: last_round._id,
-				winner: b.player,
-			});
-			if (wins && parseInt(wins.length) === parseInt(b.value)) {
-				try {
-					const upd_player = await Score.findOne({
-						player: b.player,
-					});
-					let query = {
-						right_bets: upd_player.right_bets + 1,
-					};
-					if (parseInt(b.value) === 0) {
-						query = {
-							right_bets: upd_player.right_bets + 1,
-							right_bets_zero: upd_player.right_bets_zero + 1,
-						};
-					}
-					const updated = await Score.findOneAndUpdate(
-						{ player: b.player },
-						query,
-						{
-							new: true,
-							useFindAndModify: false,
-						}
-					);
-				} catch (err2) {
-					let query = {
-						player: b.player,
-						right_bets: 1,
-					};
-					if (parseInt(b.value) === 0) {
-						query = {
-							player: b.player,
-							right_bets: 1,
-							right_bets_zero: 1,
-						};
-					}
-					const score_player = await Score.create(query);
-				}
-			}
-		});
-
-		return;
-	});
-}
-
 async function updateMaxScoresWinsAndGames(game) {
 	const update_players = await ScoreBoard.find({
 		game: game._id,
@@ -345,7 +287,7 @@ async function updateMaxScoresWinsAndGames(game) {
 					const temp_p_updated = await Score.findOneAndUpdate(
 						{ player: s.player },
 						{
-							max_score: temp_p.max_score,
+							max_score: s.points,
 						},
 						{ useFindAndModify: false, new: true }
 					);
@@ -370,6 +312,132 @@ async function updateMaxScoresWinsAndGames(game) {
 	return;
 }
 
+async function updateRightBets(game) {
+	const rounds = await Round.find({
+		game: game._id,
+	}).sort({ createdAt: -1 });
+
+	await asyncForEach(rounds, async (last_round, k) => {
+		const bets = await Bet.find({
+			round: last_round._id,
+		});
+
+		await asyncForEach(bets, async (b, i) => {
+			const wins = await Turn.find({
+				round: last_round._id,
+				winner: b.player,
+			});
+			if (wins && parseInt(wins.length) === parseInt(b.value)) {
+				try {
+					const upd_player = await Score.findOne({
+						player: b.player,
+					});
+					let query = {
+						right_bets: upd_player.right_bets + 1,
+					};
+					if (parseInt(b.value) === 0) {
+						query = {
+							right_bets: upd_player.right_bets + 1,
+							right_bets_zero: upd_player.right_bets_zero + 1,
+						};
+					}
+					query[`rb_at_${last_round.roundNumber}`] =
+						upd_player[`rb_at_${last_round.roundNumber}`] + 1;
+					const updated = await Score.findOneAndUpdate(
+						{ player: b.player },
+						query,
+						{
+							new: true,
+							useFindAndModify: false,
+						}
+					);
+				} catch (err2) {
+					let query = {
+						player: b.player,
+						right_bets: 1,
+					};
+					if (parseInt(b.value) === 0) {
+						query = {
+							player: b.player,
+							right_bets: 1,
+							right_bets_zero: 1,
+						};
+					}
+					query[`rb_at_${last_round.roundNumber}`] =
+						upd_player[`rb_at_${last_round.roundNumber}`] + 1;
+					const score_player = await Score.create(query);
+				}
+			}
+		});
+
+		return;
+	});
+}
+
+async function updateEntryWins(game) {
+	const rounds = await Round.find({ game: game._id }).sort({
+		roundNumber: 1,
+	});
+
+	await asyncForEach(rounds, async (round, i) => {
+		const turns = await Turn.find({
+			round: round._id,
+		}).sort({ turnNumber: 1 });
+
+		await asyncForEach(turns, async (turn, j) => {
+			const played_cards = await PlayedCards.find({
+				round: round._id,
+				turn: turn._id,
+			}).sort({ createdAt: 1 });
+			if (String(played_cards[0].player) === String(turn.winner)) {
+				try {
+					const current_score = await Score.findOne({
+						player: turn.winner,
+					});
+					await Score.findOneAndUpdate(
+						{ player: turn.winner },
+						{
+							entry_wins: current_score.entry_wins + 1,
+							entry_plays: current_score.entry_plays + 1,
+						},
+						{
+							new: true,
+							useFindAndModify: false,
+						}
+					);
+				} catch (err) {
+					await Score.create({
+						player: turn.winner,
+						entry_wins: 1,
+						entry_plays: 1,
+					});
+				}
+			} else {
+				try {
+					const current_score = await Score.findOne({
+						player: played_cards[0].player,
+					});
+					await Score.findOneAndUpdate(
+						{ player: played_cards[0].player },
+						{
+							entry_plays: current_score.entry_plays + 1,
+						},
+						{
+							new: true,
+							useFindAndModify: false,
+						}
+					);
+				} catch (err) {
+					await Score.create({
+						player: played_cards[0].player,
+						entry_plays: 1,
+					});
+				}
+			}
+		});
+	});
+}
+
 async function calculatePontuations(game) {
 	const players = await GamePlayer.find({ game: game }).populate('player');
 	const rounds = await Round.find({ game: game });
@@ -377,9 +445,6 @@ async function calculatePontuations(game) {
 		await asyncForEach(players, async (player, i) => {
 			let pont = 0;
 			await asyncForEach(rounds, async (round, j) => {
-				console.log(player.player.name);
-				console.log(round.roundNumber);
-
 				const bet = await Bet.findOne({
 					round: round._id,
 					player: player.player._id,
@@ -410,10 +475,7 @@ async function calculatePontuations(game) {
 							countP = 0;
 							hasPirates = false;
 
-							console.log(t.turnNumber);
-
 							temp_played_cards.forEach((e, i) => {
-								console.log(e);
 								if (e.card[0].color[0] === 's') {
 									hasSkull = true;
 								} else if (e.card[0].color[0] === 'm') {
@@ -427,14 +489,6 @@ async function calculatePontuations(game) {
 								}
 							});
 
-							console.log(
-								hasSkull,
-								hasS,
-								hasPirates,
-								parseInt(countP),
-								countP,
-								pont
-							);
 							if (hasS && hasSkull) {
 								pont += 50;
 							} else if (
@@ -462,10 +516,8 @@ async function calculatePontuations(game) {
 							hasS = false;
 							countP = 0;
 							hasPirates = false;
-							console.log(t.turnNumber);
 
 							temp_played_cards.forEach((e, i) => {
-								console.log(e);
 								if (e.card[0].color[0] === 's') {
 									hasSkull = true;
 								} else if (e.card[0].color[0] === 'm') {
@@ -479,14 +531,6 @@ async function calculatePontuations(game) {
 								}
 							});
 
-							console.log(
-								hasSkull,
-								hasS,
-								hasPirates,
-								parseInt(countP),
-								countP,
-								pont
-							);
 							if (hasS && hasSkull) {
 								pont += 50;
 							} else if (
@@ -544,13 +588,14 @@ router.get('/games', async (req, res) => {
 });
 
 router.get('/scoreboards/calculateScores', async (req, res) => {
-	const games = await Game.find().sort({
+	const games = await Game.find({ status: 'finished' }).sort({
 		createdAt: -1,
 	});
 	await Score.deleteMany();
 	await asyncForEach(games, async (game, i) => {
 		await updateMaxScoresWinsAndGames(game);
 		await updateRightBets(game);
+		await updateEntryWins(game);
 	});
 
 	return res.status(200).send(await Score.find().populate('player'));
@@ -996,6 +1041,7 @@ router.post('/cards', async (req, res) => {
 								) {
 									await updateMaxScoresWinsAndGames(game);
 									await updateRightBets(game);
+									await updateEntryWins(game);
 
 									const new_game = await Game.findOneAndUpdate(
 										{ _id: game._id },
@@ -1062,6 +1108,7 @@ router.post('/cards', async (req, res) => {
 								await calculatePontuations(game._id);
 								await updateMaxScoresWinsAndGames(game);
 								await updateRightBets(game);
+								await updateEntryWins(game);
 
 								const temp_game = await Game.findOneAndUpdate(
 									{ _id: game._id },
