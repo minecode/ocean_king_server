@@ -12,6 +12,7 @@ const Message = require('../models/Message');
 const Score = require('../models/Score');
 const Friend = require('../models/Friend');
 const router = express.Router();
+const mongoose = require('../database');
 
 const cards = [
 	{ color: 'flag1', value: '0', index: 0 },
@@ -923,9 +924,130 @@ router.get('/rounds', async (req, res) => {
 	const { game } = req.query;
 
 	try {
-		const rounds = await Round.find({ game: game }).sort({ createdAt: 1 });
+		const rounds = await Round.aggregate([
+			{
+				$match: {
+					game: mongoose.Types.ObjectId(game),
+				},
+			},
+			{
+				$lookup: {
+					from: 'turns',
+					localField: '_id',
+					foreignField: 'round',
+					as: 'rel_turns',
+				},
+			},
+			{
+				$unwind: {
+					path: '$rel_turns',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$lookup: {
+					from: 'playedcards',
+					localField: 'rel_turns._id',
+					foreignField: 'turn',
+					as: 'rel_playedcards',
+				},
+			},
+			{
+				$unwind: {
+					path: '$rel_playedcards',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$lookup: {
+					from: 'users',
+					localField: 'rel_turns.winner',
+					foreignField: '_id',
+					as: 'rel_turn_winner',
+				},
+			},
+			{
+				$unwind: {
+					path: '$rel_turn_winner',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$lookup: {
+					from: 'users',
+					localField: 'rel_playedcards.player',
+					foreignField: '_id',
+					as: 'rel_turn_players',
+				},
+			},
+			{
+				$unwind: {
+					path: '$rel_turn_players',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$group: {
+					_id: '$rel_turns._id',
+					game: { $first: '$game' },
+					round: { $first: '$_id' },
+					roundNumber: { $first: '$roundNumber' },
+					turnNumber: { $first: '$rel_turns.turnNumber' },
+					winner: {
+						$first: {
+							player: '$rel_turn_winner._id',
+							name: '$rel_turn_winner.name',
+							email: '$rel_turn_winner.email',
+						},
+					},
+					rel_playedcards: {
+						$push: {
+							player: '$rel_playedcards.player',
+							name: '$rel_turn_players.name',
+							email: '$rel_turn_players.email',
+							card: '$rel_playedcards.card',
+						},
+					},
+				},
+			},
+			{ $sort: { roundNumber: 1, turnNumber: 1 } },
+			{
+				$group: {
+					_id: '$round',
+					turn: { $first: '$_id' },
+					game: { $first: '$game' },
+					roundNumber: { $first: '$roundNumber' },
+					rel_plays: {
+						$push: {
+							player: '$rel_playedcards.player',
+							name: '$rel_playedcards.name',
+							email: '$rel_playedcards.email',
+							card: '$rel_playedcards.card',
+						},
+					},
+					// turnNumber: { $first: '$rel_turns.turnNumber' },
+					winner: {
+						$push: {
+							player: '$winner.player',
+							name: '$winner.name',
+							email: '$winner.email',
+						},
+					},
+					// rel_playedcards: {
+					// 	$push: {
+					// 		player: '$rel_playedcards.player',
+					// 		name: '$rel_turn_players.name',
+					// 		email: '$rel_turn_players.email',
+					// 		card: '$rel_playedcards.card',
+					// 	},
+					// },
+				},
+			},
+			{ $sort: { roundNumber: 1 } },
+		]);
 		res.send({ rounds: rounds });
 	} catch (err) {
+		console.log(err);
 		res.status(400).send({
 			error: 'Cannot get the rounds of this game',
 		});
