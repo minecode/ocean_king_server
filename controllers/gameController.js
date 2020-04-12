@@ -919,6 +919,54 @@ router.get('/pontuations', async (req, res) => {
 	}
 });
 
+router.get('/rounds', async (req, res) => {
+	const { game } = req.query;
+
+	try {
+		const rounds = await Round.find({ game: game }).sort({ createdAt: 1 });
+		res.send({ rounds: rounds });
+	} catch (err) {
+		res.status(400).send({
+			error: 'Cannot get the rounds of this game',
+		});
+	}
+});
+
+router.get('/turns', async (req, res) => {
+	const { round } = req.query;
+
+	try {
+		const turns = await Turn.find({ round: round })
+			.sort({
+				createdAt: 1,
+			})
+			.populate('winner');
+		res.send({ turns: turns });
+	} catch (err) {
+		res.status(400).send({
+			error: 'Cannot get the turns of this round',
+		});
+	}
+});
+
+router.get('/playedCards', async (req, res) => {
+	const { turn, round } = req.query;
+
+	try {
+		const played_cards = await PlayedCards.find({
+			turn: turn,
+			round: round,
+		}).sort({
+			createdAt: 1,
+		});
+		res.send({ played_cards: played_cards });
+	} catch (err) {
+		res.status(400).send({
+			error: 'Cannot get the played cards of this turn',
+		});
+	}
+});
+
 router.post('/cards', async (req, res) => {
 	const { game, user, card } = req.body;
 
