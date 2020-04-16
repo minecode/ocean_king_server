@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('../models/User');
+const Notifications = require('../models/Notifications');
 const router = express.Router();
 const io = require('socket.io-client');
 const crypto = require('crypto');
@@ -9,6 +10,42 @@ const getHashedPassword = password => {
 	const hash = sha256.update(password).digest('base64');
 	return hash;
 };
+
+router.post('/pn', async (req, res) => {
+	const { user, token } = req.body;
+
+	try {
+		let temp_user = await Notifications.findOne({ user: user })
+		if (!user) {
+			temp_user = await Notifications.create({user: user, token: token})
+			return res.send({ temp_user });
+		} else {
+			temp_user = await Notifications.findOneAndUpdate({ user: user }, {token: token}, {new: true, useFindAndModify: false})
+			return res.send({ temp_user });
+		}
+	} catch (err) {
+		// console.log(err);
+		return res.status(400).send({ error: 'Error pn 1' });
+	}
+
+})
+
+router.get('/user', async (req, res) => {
+	const { user } = req.body;
+
+	try {
+		let temp_user = await User.findOne({ user: user })
+		if (temp_user) {
+			return res.send({ temp_user });
+		}
+		return res.status(400).send({ error: 'Cannot get current user: error code 1' });
+
+	} catch (err) {
+		// console.log(err);
+		return res.status(400).send({ error: 'Cannot get current user: error code 2' });
+	}
+
+})
 
 router.post('/register', async (req, res) => {
 	const { email } = req.body;
