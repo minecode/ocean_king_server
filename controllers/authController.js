@@ -26,7 +26,6 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
 	const { username, password } = req.body;
-	console.log(req.body)
 	try {
 		const user = await User.findOne({ name: username }).select('+password');
 		const hash = getHashedPassword(password);
@@ -42,10 +41,24 @@ router.post('/login', async (req, res) => {
 
 router.post('/googleLogin', async (req, res) => {
 	const { user } = req.body;
-	console.log(req.body);
 	try {
-		const dataBase_user = await User.findOne({ email: user.email });
+		let dataBase_user = await User.findOne({ email: user.email });
 		if (dataBase_user) {
+			if(dataBase_user.photo === 'avatar') {
+				if (user.photoUrl) {
+					dataBase_user = await User.findOneAndUpdate(
+						{ email: user.email }, 
+						{ photo: user.photoUrl }, 
+						{ new: true, useFindAndModify: false }
+						);
+				} else if(user.imageURL) {
+					dataBase_user = await User.findOneAndUpdate(
+						{ email: user.email }, { photo: user.imageURL }, 
+						{ new: true, useFindAndModify: false }
+						);
+
+				}
+			}
 			return res.send({ dataBase_user });
 		} else {
 			if (user.displayName) {
