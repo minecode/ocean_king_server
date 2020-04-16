@@ -26,6 +26,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
 	const { username, password } = req.body;
+	console.log(req.body)
 	try {
 		const user = await User.findOne({ name: username }).select('+password');
 		const hash = getHashedPassword(password);
