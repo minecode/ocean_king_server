@@ -87,7 +87,7 @@ router.post('/googleLogin', async (req, res) => {
 	try {
 		let dataBase_user = await User.findOne({ email: user.email });
 		if (dataBase_user) {
-			if (dataBase_user.photo === 'avatar') {
+			if (String(dataBase_user.photo) === 'avatar') {
 				if (user.photoUrl) {
 					dataBase_user = await User.findOneAndUpdate(
 						{ email: user.email },
@@ -108,6 +108,7 @@ router.post('/googleLogin', async (req, res) => {
 				const new_user = await User.create({
 					name: user.displayName,
 					email: user.email,
+					photo: user.imageURL || user.photoUrl,
 				});
 				return res.send({ new_user });
 			}
@@ -115,6 +116,7 @@ router.post('/googleLogin', async (req, res) => {
 				const new_user = await User.create({
 					name: user.name,
 					email: user.email,
+					photo: user.imageURL || user.photoUrl,
 				});
 				return res.send({ new_user });
 			}
