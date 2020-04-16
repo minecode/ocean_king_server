@@ -284,15 +284,30 @@ async function updateMaxScoresWinsAndGames(game) {
 					{ useFindAndModify: false, new: true }
 				);
 			} else {
-				if (hasNewMax) {
-					const temp_p_updated = await Score.findOneAndUpdate(
-						{ player: s.player },
-						{
-							max_score: s.points,
-						},
-						{ useFindAndModify: false, new: true }
-					);
+				const temp_p = await Score.findOne(
+					{ player: s.player })
+				let query = {}
+
+				if(parseInt(s.points) === parseInt(scoreboards[0].points) && hasNewMax) {
+					query = {
+						wins: temp_p.wins + 1,
+						max_score: s.points,
+					};
+				} else if(parseInt(s.points) === parseInt(scoreboards[0].points) && !hasNewMax) {
+					query = {
+						wins: temp_p.wins + 1,
+					};
+				} else if(parseInt(s.points) !== parseInt(scoreboards[0].points) && hasNewMax) {
+					query = {
+						max_score: s.points,
+					};
 				}
+				
+				const temp_p_updated = await Score.findOneAndUpdate(
+					{ player: s.player },
+					query,
+					{ useFindAndModify: false, new: true }
+				);
 			}
 		} catch (err) {
 			if (i === 0) {
