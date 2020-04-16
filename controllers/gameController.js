@@ -284,25 +284,33 @@ async function updateMaxScoresWinsAndGames(game) {
 					{ useFindAndModify: false, new: true }
 				);
 			} else {
-				const temp_p = await Score.findOne(
-					{ player: s.player })
-				let query = {}
+				const temp_p = await Score.findOne({ player: s.player });
+				let query = {};
 
-				if(parseInt(s.points) === parseInt(scoreboards[0].points) && hasNewMax) {
+				if (
+					parseInt(s.points) === parseInt(scoreboards[0].points) &&
+					hasNewMax
+				) {
 					query = {
 						wins: temp_p.wins + 1,
 						max_score: s.points,
 					};
-				} else if(parseInt(s.points) === parseInt(scoreboards[0].points) && !hasNewMax) {
+				} else if (
+					parseInt(s.points) === parseInt(scoreboards[0].points) &&
+					!hasNewMax
+				) {
 					query = {
 						wins: temp_p.wins + 1,
 					};
-				} else if(parseInt(s.points) !== parseInt(scoreboards[0].points) && hasNewMax) {
+				} else if (
+					parseInt(s.points) !== parseInt(scoreboards[0].points) &&
+					hasNewMax
+				) {
 					query = {
 						max_score: s.points,
 					};
 				}
-				
+
 				const temp_p_updated = await Score.findOneAndUpdate(
 					{ player: s.player },
 					query,
@@ -618,7 +626,24 @@ router.get('/scoreboards/calculateScores', async (req, res) => {
 });
 
 router.get('/scoreboards/scores', async (req, res) => {
-	return res.status(200).send(await Score.find().populate('player'));
+	const { user } = req.query;
+	if (user !== undefined) {
+		try {
+			let temp_score = await Score.findOne({
+				player: user,
+			}).populate('player');
+			return res.status(200).send(temp_score);
+		} catch (err) {
+			return res
+				.status(400)
+				.send({ error: 'Cannot get scoreboards for this user' });
+		}
+	}
+	try {
+		return res.status(200).send(await Score.find().populate('player'));
+	} catch (err) {
+		return res.status(400).send({ error: 'Cannot get scoreboards' });
+	}
 });
 
 router.get('/scoreboards/games', async (req, res) => {
