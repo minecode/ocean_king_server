@@ -108,7 +108,6 @@ router.post('/googleLogin', async (req, res) => {
 				const new_user = await User.create({
 					name: user.displayName,
 					email: user.email,
-					photo: user.imageURL || user.photoUrl,
 				});
 				return res.send({ new_user });
 			}
@@ -116,7 +115,6 @@ router.post('/googleLogin', async (req, res) => {
 				const new_user = await User.create({
 					name: user.name,
 					email: user.email,
-					photo: user.imageURL || user.photoUrl,
 				});
 				return res.send({ new_user });
 			}
