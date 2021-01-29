@@ -37,6 +37,7 @@ app.set('io', io);
 
 require('./controllers/authController')(app);
 require('./controllers/gameController')(app);
+require('./controllers/friendsController')(app);
 
 http.listen(port, function () {
 	console.log('listening on port ' + port);

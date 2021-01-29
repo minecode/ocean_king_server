@@ -2,6 +2,7 @@ const express = require('express');
 const Game = require('../models/Game');
 const User = require('../models/User');
 const Round = require('../models/Round');
+const Notifications = require('../models/Notifications');
 const Turn = require('../models/Turn');
 const Bet = require('../models/Bet');
 const Cards = require('../models/Cards');
@@ -1129,6 +1130,16 @@ router.get('/playedCards', async (req, res) => {
 	}
 });
 
+router.get('/pn', async (req, res) => {
+	try {
+		let notifications = await Notifications.find().populate('user');
+		return res.send({ notifications });
+	} catch (err) {
+		// console.log(err);
+		return res.status(400).send({ error: 'Error pn 1' });
+	}
+})
+
 router.post('/cards', async (req, res) => {
 	const { game, user, card } = req.body;
 
@@ -1270,7 +1281,7 @@ router.post('/cards', async (req, res) => {
 										.slice(
 											0,
 											players.length *
-												new_round.roundNumber
+											new_round.roundNumber
 										);
 
 									await asyncForEach(
